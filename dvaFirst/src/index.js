@@ -1,14 +1,12 @@
 import dva from 'dva';
 import './index.css';
-
+import {TestPage,TestPageClass} from "./components/morePage";
 // 1. Initialize
 // const app = dva();
 const app = dva({
-    initialState: {
-        test:[1,2,4,5]
-   },
+    initialState:{count:1}
 });
-console.log(app._store);
+console.log(app);
 
 // 2. Plugins
 // app.use({});
@@ -18,7 +16,8 @@ console.log(app._store);
 // app.model(require("./models/products").default);
 
 // 4. Router
-app.router(require('./router').default);
+// app.router(require('./router').default);
+app.router(()=>(<TestPageClass/>))
  
 // 5. Start
 app.start('#root');
