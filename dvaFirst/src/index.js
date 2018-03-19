@@ -1,12 +1,13 @@
 import dva from 'dva';
 import './index.css';
-import {TestPage,TestPageClass} from "./components/morePage";
+import {browserHistory} from "dva/router";
+// import {TestPage,TestPageClass} from "./components/morePage";
 // 1. Initialize
 // const app = dva();
+console.log(browserHistory);
 const app = dva({
-    initialState:{count:1}
+    history:browserHistory
 });
-console.log(app);
 
 // 2. Plugins
 // app.use({});
@@ -16,8 +17,8 @@ console.log(app);
 // app.model(require("./models/products").default);
 
 // 4. Router
-// app.router(require('./router').default);
-app.router(()=>(<TestPageClass/>))
+app.router(require('./router').default);
+// app.router(()=>(<TestPageClass/>))
  
 // 5. Start
 app.start('#root');
