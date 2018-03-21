@@ -6,19 +6,20 @@ import {browserHistory} from "dva/router";
 // const app = dva();
 console.log(browserHistory);
 const app = dva({
-    history:browserHistory
+    // history:browserHistory,
+    // initialState:{
+    //     global:1
+    // }
 });
 
 // 2. Plugins
 // app.use({});
 
 // 3. Model
-// app.model(require('./models/example').default);
-// app.model(require("./models/products").default);
+
 
 // 4. Router
-app.router(require('./router').default);
-// app.router(()=>(<TestPageClass/>))
+app.router(require("./router").default);
  
 // 5. Start
 app.start('#root');

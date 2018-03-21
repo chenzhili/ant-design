@@ -66,10 +66,28 @@
             }
         }
 
-        II、记清楚 数据 和 view之间的通讯渲染 是通过 state，所以 connect 也只是 把改变后的 state的值传递给 组件，不会有其他；当然 包括 任何传递中都默认传递的 dispatch 方法；用于 触发  action ；这样就形成一个 闭环；
+        II、记清楚 数据 和 view之间的通讯渲染 是通过 state，所以 connect 也只是 把改变后的 state的值传递给 组件，包括对应的 一些信息；当然 包括 任何传递中都默认传递的 dispatch 方法；用于 触发  action ；这样就形成一个 闭环；
 
     2、个人对于 dispatch 的理解，其实可以分成两类 action的触发；
         I、view 到 models 通过 dispatch 方法 触发 action；
             这里很重要的 就是 type，通过他 匹配对应的models；
             如：dispatch({type:"app/login",payload:任何类型的值});
         II、在 models 中 的 effects 中 通过 put（类似dispatch） 触发 action；向 reducers 发送对应的 type 识别 不同的方法，对数据进行处理
+
+2018/3/20
+    1、dva/dynamic 解决组件动态加载问题的 util 方法
+        如：
+        import dynamic from 'dva/dynamic';
+
+        const UserPageComponent = dynamic({
+        app,
+        models: () => [
+            import('./models/users'),
+        ],
+        component: () => import('./routes/UserPage'),
+        });
+        opts 包含：
+
+            app: dva 实例，加载 models 时需要,就是指 第一次实例 dva  const app = dva();指的是这个
+            models: 返回 Promise 数组的函数，Promise 返回 dva model
+            component：返回 Promise 的函数，Promise 返回 React Component
