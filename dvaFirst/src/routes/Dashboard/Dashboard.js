@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {Row,Col,Layout,Menu,Icon} from "antd";
 import styles from "./Dashboard.less";
 import logo from "./logo.svg"
-console.dir(Layout);
+import nprogress from "nprogress";
 
 const {Header,Sider,Content,Footer} = Layout;
 // const Dashboard = (props)=>{
@@ -35,7 +35,24 @@ class Dashboard extends React.Component{
           collapsed: !this.state.collapsed,
         });
       }
+      navClicked = ({item,key,keyPath})=>{
+        const {dispatch,Dashboard} = this.props;
+        console.log(Dashboard);
+        nprogress.start();
+        setTimeout(()=>{
+          console.log(1);
+          nprogress.done();
+        },1000);
+        dispatch({type:"Dashboard/testMenu",playload:key});
+      }
+      componentDidMount(){}
       render() {
+        console.log(window.location.href);
+        const menuList = [
+          {type:"user",value:"nav 1"},
+          {type:"video-camera",value:"nav 2"},
+          {type:"upload",value:"nav 3"}
+        ];
         return (
           <Layout className={styles.layout}>
             <Sider
@@ -47,8 +64,14 @@ class Dashboard extends React.Component{
                 <img src={logo}/>
                 <span className={this.state.collapsed?`${styles["text-is-show"]}`:""}>ANTD ADMIN</span>
               </div>
-              <Menu className={styles.menu} theme="light" mode="inline" defaultSelectedKeys={['1']}>
-                <Menu.Item key="1">
+              <Menu className={styles.menu} theme="light" mode="inline" defaultSelectedKeys={['1']} onClick={this.navClicked}>
+              {menuList.map((v,i)=>(
+                <Menu.Item key={i} onClick={this.navClicked}>
+                  <Icon type={v.type}/>
+                  <span>{v.value}</span>
+                </Menu.Item>
+              ))}
+                {/* <Menu.Item key="1">
                   <Icon type="user" />
                   <span>nav 1</span>
                 </Menu.Item>
@@ -59,16 +82,27 @@ class Dashboard extends React.Component{
                 <Menu.Item key="3">
                   <Icon type="upload" />
                   <span>nav 3</span>
-                </Menu.Item>
+                </Menu.Item> */}
               </Menu>
             </Sider>
             <Layout>
-              <Header style={{ background: '#fff', padding: 0 }}>
+              <Header style={{ background: '#fff', padding: 0,display:"flex",alignItems:"center" }}>
+                <div className={styles.hover} style={{flex:"0 1 10%",textAlign:"center"}}>
                 <Icon
                   className={styles.trigger}
                   type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
                   onClick={this.toggle}
                 />
+                </div>
+                <div style={{flex:"0 1 30%",justifyContent:"end",display:"flex",alignItems:"center",marginLeft:"60%"}}>
+                  <div className={styles.hover} style={{flex:"0 1 50%",textAlign:"center"}}>
+                  <Icon type="mail" style={{}}/>
+                  </div>
+                  <div className={styles.hover} style={{flex:"0 1 50%",textAlign:"center"}}>
+                    <Icon type="user"/>
+                    guest
+                  </div>
+                </div>
               </Header>
               <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
                 Content
@@ -81,5 +115,8 @@ class Dashboard extends React.Component{
         );
       }
 }
-export default Dashboard;
+export default connect((obj)=>{
+  console.log(obj);
+  return obj;
+})(Dashboard);
 
