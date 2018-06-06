@@ -12,7 +12,7 @@ const app = dva({
     // }
 });
 
-// 2. Plugins
+// 2. Plugins 
 // app.use({});
 
 // 3. Model

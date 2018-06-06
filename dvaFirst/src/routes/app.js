@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import {Row,Col,Layout,Menu,Icon} from "antd";
 import styles from "./app.less";
 import logo from "./Dashboard/logo.svg"

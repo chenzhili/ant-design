@@ -53,7 +53,7 @@ function RouterConfig({history,app}) {
     //       </Switch>
     //     </Router>
     //   </App>
-    // </LocaleProvider>
+    // </LocaleProvider> 
 
     //4.0的写法结构
     <LocaleProvider locale={zhCN}>
