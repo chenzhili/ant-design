@@ -7,9 +7,13 @@ import logo from "./Dashboard/logo.svg"
 import nprogress from "nprogress";
 import { Router, Route, Switch,Redirect } from 'dva/router';
 
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
+
 //添加组件
 import Dashboard from "./Dashboard/Dashboard";
 import PackageH1 from "./PackageH1/PackageH1"
+import Dnd from "./Dnd/Dnd";
 
 const {Header,Sider,Content,Footer} = Layout;
 /* const Dashboard = (props)=>{
@@ -151,6 +155,7 @@ class App extends React.Component{
                   <Route path={this.props.match.path} exact render={()=><Redirect to={`${this.props.match.path}/dashboard`}/>}/>
                   <Route path={`${this.props.match.path}/dashboard`} component={Dashboard}/>
                   <Route path={`${this.props.match.path}/h1`} component={PackageH1}/>
+                  <Route path={`${this.props.match.path}/dnd`} component={Dnd}/>
                 </Switch>
             </Content>
 

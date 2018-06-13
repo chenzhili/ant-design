@@ -10,6 +10,8 @@
     "antd": "^3.3.0",
     "babel-plugin-import": "^1.6.7",
     "dva": "^2.1.0",
+    "immutability-helper": "^2.7.0",
+    "immutable": "^3.8.2",
     "nprogress": "^0.2.0",
     "react": "^16.2.0",
     "react-dnd": "^4.0.2",
