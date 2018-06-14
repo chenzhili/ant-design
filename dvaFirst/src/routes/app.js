@@ -167,7 +167,7 @@ class App extends React.Component{
       );
     }
 }
-export default connect(({app})=>{
+export default DragDropContext(HTML5Backend)(connect(({app})=>{
   return {app}
-})(App);
+})(App));
 

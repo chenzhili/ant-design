@@ -107,3 +107,11 @@
             就是一个是 浅合并 和 深合并：
             浅合并：指 合并第一层数据，深层次的 引用数据只会被后面的替换
             深合并：就是合并 所有的数据 包括 深层次的
+
+2018/6/14
+    对于 dnd 的运用，一定要知道几个必须的量：
+    需要进行 dnd 操作的 
+    容器 DragDropContext(这个是高阶函数的方式) 或者 DragDropContextProvider(这个是组件的方式)；这个必须放在 可拖动元素的祖先上；
+    拖动源： DrageSource 就是一个 高阶函数 类似于 connect ，制定需要拖动的 组件，必须在 connect（连接器） 中 给 组件 传入 connectDragSource: connect.dragSource()；
+    拖动目标：DragTarget 跟上面类似，一样在 connect 中 给 组件 传入 connectDropTarget: connect.dropTarget()
+
