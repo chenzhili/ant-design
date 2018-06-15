@@ -17,6 +17,9 @@ export default {
                 case "2":
                 yield put(routerRedux.replace("dnd"));
                 break;
+                case "3":
+                yield put(routerRedux.replace("again"));
+                break;
                 default:
                 yield put(routerRedux.replace("h1"));
                 

@@ -14,6 +14,7 @@ import { DragDropContext } from 'react-dnd';
 import Dashboard from "./Dashboard/Dashboard";
 import PackageH1 from "./PackageH1/PackageH1"
 import Dnd from "./Dnd/Dnd";
+import DndAgain from "./DndAgain/DndAgain";
 
 const {Header,Sider,Content,Footer} = Layout;
 /* const Dashboard = (props)=>{
@@ -108,7 +109,8 @@ class App extends React.Component{
       const menuList = [
         {type:"user",value:"nav 1"},
         {type:"video-camera",value:"nav 2"},
-        {type:"upload",value:"nav 3"}
+        {type:"upload",value:"nav 3"},
+        {type:"work-again",value:"nav 4"},
       ];
       return (
         <Layout className={styles.layout}>
@@ -156,6 +158,7 @@ class App extends React.Component{
                   <Route path={`${this.props.match.path}/dashboard`} component={Dashboard}/>
                   <Route path={`${this.props.match.path}/h1`} component={PackageH1}/>
                   <Route path={`${this.props.match.path}/dnd`} component={Dnd}/>
+                  <Route path={`${this.props.match.path}/again`} component={DndAgain}/>
                 </Switch>
             </Content>
 
