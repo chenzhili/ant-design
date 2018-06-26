@@ -133,6 +133,7 @@ class Knight extends Component {
 const squareTarget = {
     drop(props) {
         const {x,y,handleSquareClick} = props;
+        console.log("执行");
         handleSquareClick(x,y);
     }
 };

@@ -20,6 +20,9 @@ export default {
                 case "3":
                 yield put(routerRedux.replace("again"));
                 break;
+                case "4":
+                yield put(routerRedux.replace("sort"));
+                break;
                 default:
                 yield put(routerRedux.replace("h1"));
                 

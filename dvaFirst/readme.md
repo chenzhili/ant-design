@@ -115,3 +115,27 @@
     拖动源： DrageSource 就是一个 高阶函数 类似于 connect ，制定需要拖动的 组件，必须在 connect（连接器） 中 给 组件 传入 connectDragSource: connect.dragSource()；
     拖动目标：DragTarget 跟上面类似，一样在 connect 中 给 组件 传入 connectDropTarget: connect.dropTarget()
 
+
+2018/6/21
+    对于 dva 中的 没用用过的 subscriptions (订阅者)的理解，就是可以在 对应的 连接 了 对应的 models 上 ，初始化就会调用，这里可以获取history 或者 你需要 初始化 数据的操作；
+    地址：https://dvajs.com/knowledgemap/#subscription
+
+    subscriptions: {
+    //监听地址，如果地址含有app则跳转到登陆页
+    setup({ dispatch, history }) {
+        history.listen(location => {
+            if (location.pathname.includes('app')) {
+            dispatch({
+                type: 'gologin'
+            })
+            }
+        });
+        },
+        watchAndRefreshList({ dispatch, history }){
+        dispatch({
+            type: 'watchAndRefreshList',
+            dispatch
+        });
+        }
+    },
+

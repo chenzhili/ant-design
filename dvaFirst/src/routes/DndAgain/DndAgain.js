@@ -2,6 +2,13 @@ import React, { Component } from "react"
 import { DragSource, DropTarget, DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend';
 
+/* import test,{fun1} from "./module"
+console.log(fun1);
+console.log(test); */
+import * as test from "./module"
+console.log(test);
+// fun1 = {}; //报错
+
 const move = "aa";
 class DndAgain extends Component {
     constructor() {
@@ -84,8 +91,11 @@ class Board extends Component {
 }
 
 @DragSource(move, {
-    beginDrag() {
-        return {};
+    beginDrag(props,monitor,component) {
+        // console.log(component);
+        return {
+            test:"就是这个"
+        };
     }
 }, (connect, monitor) => (
     {
@@ -106,6 +116,17 @@ class Knight extends Component {
     drop(props) {
         let {moveKnight,x,y} = props;
         moveKnight(x,y);
+    },
+    hover(props,monitor,component){
+        /* let isOver = monitor.isOver({shallow:true});
+        console.log(isOver); */
+        /* let canDrop = monitor.canDrop();
+        console.log(canDrop); */
+        /* let item = monitor.getItem();
+        console.log(item); */
+    },
+    canDrop(){
+        return false
     }
 }, (connect, monitor) => ({
     connectDropTarget: connect.dropTarget(),
