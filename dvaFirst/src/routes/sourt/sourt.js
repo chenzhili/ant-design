@@ -44,7 +44,7 @@ function generateCom(com) {
             let item = monitor.getItem();
             // console.log(item);
             let isExist = props.arr.filter(v => v.id == item.id);
-
+            console.log("这里也发生了");
             // 先查询当前 target的位置 index
             let { index } = findIndex(id);
             // 1、如果arr中不存在 当前的 item 就加入排序
@@ -259,7 +259,7 @@ class Source extends Component {
         let {arr,findIndex,changeItemAgain,changeItem} = props;
 
         let isExist = arr.filter(v => v.id == item.id);
-        
+        console.log("同时发生");
         
         // 1、如果arr中不存在 当前的 item 就加入排序
         if (!isExist.length) {
