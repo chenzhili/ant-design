@@ -23,6 +23,9 @@ export default {
                 case "4":
                 yield put(routerRedux.replace("sort"));
                 break;
+                case "5":
+                yield put(routerRedux.replace("DndTest"));
+                break;
                 default:
                 yield put(routerRedux.replace("h1"));
                 

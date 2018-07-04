@@ -57,9 +57,9 @@ function generateCom(com) {
             // 2、如果 arr 中存在，就移动他到对应的位置
             else {
                 // 一起 item 存在的位置为 preIndex
-                let { preIndex } = findIndex(item.id);
+                let target = findIndex(item.id);
                 // 先暂时写一个函数
-                changeItemAgain(preIndex, index, item)
+                changeItemAgain(target.index, index, item)
                 // props.arr.splice(preIndex,1);
                 // props.arr.splice(index,0,item);
             }
@@ -270,9 +270,9 @@ class Source extends Component {
         // 2、如果 arr 中存在，就移动他到对应的位置
         else {
             // 一起 item 存在的位置为 preIndex
-            let { preIndex } = findIndex(item.id);
+            let { index } = findIndex(item.id);
             // 先暂时写一个函数
-            changeItemAgain(preIndex, arr.length, item)
+            changeItemAgain(index, arr.length, item)
         }
 
     }
