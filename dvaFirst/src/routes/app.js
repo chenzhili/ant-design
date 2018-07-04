@@ -17,6 +17,8 @@ import Dnd from "./Dnd/Dnd";
 import DndAgain from "./DndAgain/DndAgain";
 import Sourt from "./sourt/sourt";
 import DndTest from "./DndTest/DndTest"
+// 正式的东西
+import DndWork from "./DndWork/DndWork"
 
 const {Header,Sider,Content,Footer} = Layout;
 /* const Dashboard = (props)=>{
@@ -115,6 +117,7 @@ class App extends React.Component{
         {type:"work-again",value:"nav 4"},
         {type:"sourt",value:"nav 5"},
         {type:"DndTest",value:"nav 6"},
+        {type:"DndWork",value:"DndWork"}
       ];
       return (
         <Layout className={styles.layout}>
@@ -165,6 +168,7 @@ class App extends React.Component{
                   <Route path={`${this.props.match.path}/again`} component={DndAgain}/>
                   <Route path={`${this.props.match.path}/sort`} component={Sourt}/>
                   <Route path={`${this.props.match.path}/DndTest`} component={DndTest}/>
+                  <Route path={`${this.props.match.path}/DndWork`} component={DndWork}/>
                 </Switch>
             </Content>
 

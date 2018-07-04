@@ -256,11 +256,11 @@ class Source extends Component {
         let isOver = monitor.isOver({ shallow: true });
         let canDrop = monitor.canDrop();
         let item = monitor.getItem();
-        let {arr,findIndex,changeItemAgain,changeItem} = props;
+        let { arr, findIndex, changeItemAgain, changeItem } = props;
 
         let isExist = arr.filter(v => v.id == item.id);
-        
-        
+
+
         // 1、如果arr中不存在 当前的 item 就加入排序
         if (!isExist.length) {
 
@@ -297,18 +297,16 @@ class Target extends Component {
     }
 
     render() {
-        const { connectDropTarget, isOver,arr } = this.props;
+        const { connectDropTarget, isOver, arr } = this.props;
         // console.log(this.props.arr);
         return connectDropTarget(
             <div style={{ width: "100%", height: "200px", backgroundColor: "#E6F7FF" }}>
                 {this.props.arr.map((v, i) => {
                     // console.log(v);
                     return (
-                        <div key={i}>
-                            <v.com id={v.id} findIndex={this.props.findIndex} changeItem={this.props.changeItem}
-                                changeItemAgain={this.props.changeItemAgain} 
-                                arr={arr}/>
-                        </div>
+                        <v.com key={i} id={v.id} findIndex={this.props.findIndex} changeItem={this.props.changeItem}
+                                changeItemAgain={this.props.changeItemAgain}
+                                arr={arr} />
                     )
                 })}
             </div>
