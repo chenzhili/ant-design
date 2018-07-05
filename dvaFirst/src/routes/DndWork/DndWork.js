@@ -4,6 +4,32 @@ import { Row, Col, Input, Radio, DatePicker, Button, Rate } from "antd"
 
 const type = "move";
 
+// 高阶函数用于处理 container--target的排序功能
+function generateDndCom(com){
+    return DropTarget(type,{
+        // hover(props,monitor,component){
+        //     let {id:hoverId} = props;
+        //     let {item:{id:dragId}} = monitor.getItem();
+        //     // console.log(hoverId);
+        //     // console.log(dragId);
+        // }
+    },(connect,monitor)=>({
+        connectDropTarget: connect.dropTarget(),
+    }))(
+        class extends Component{
+            render(){
+                let {connectDropTarget} = this.props;
+                return connectDropTarget(
+                    <div>
+                        {com}
+                    </div>
+                );
+            }
+        }
+    );
+}
+
+
 export default class DndWork extends Component {
     constructor() {
         super();
@@ -72,11 +98,14 @@ export default class DndWork extends Component {
 
                     >
                         {
-                            this.state.formArr.map(v => (
-                                <div key={v.id} style={{ marginBottom: "10px" }}>
-                                    {v.com}
-                                </div>
-                            ))
+                            this.state.formArr.map(v =>{
+                                let C = generateDndCom(v.com);
+                                return (
+                                        <div key={v.id} style={{ marginBottom: "10px" }}>
+                                            <C id={v.id}/>
+                                        </div>
+                                )
+                            })
                         }
                     </FormTarget>
                 </Col>
