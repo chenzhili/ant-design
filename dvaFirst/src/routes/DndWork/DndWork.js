@@ -19,6 +19,7 @@ function generateDndCom(com){
         class extends Component{
             render(){
                 let {connectDropTarget} = this.props;
+                console.log(connectDropTarget);
                 return connectDropTarget(
                     <div>
                         {com}
@@ -98,14 +99,37 @@ export default class DndWork extends Component {
 
                     >
                         {
-                            this.state.formArr.map(v =>{
-                                let C = generateDndCom(v.com);
-                                return (
-                                        <div key={v.id} style={{ marginBottom: "10px" }}>
-                                            <C id={v.id}/>
-                                        </div>
+                            // this.state.formArr.map(v =>{
+                            //     let C = generateDndCom(v.com);
+                            //     return (
+                            //             <div key={v.id} style={{ marginBottom: "10px" }}>
+                            //                 <C id={v.id}/>
+                            //             </div>
+                            //     )
+                            // })
+                            DropTarget(type,{
+                                    // hover(props,monitor,component){
+                                    //     let {id:hoverId} = props;
+                                    //     let {item:{id:dragId}} = monitor.getItem();
+                                    //     // console.log(hoverId);
+                                    //     // console.log(dragId);
+                                    // }
+                                },(connect,monitor)=>({
+                                    connectDropTarget: connect.dropTarget(),
+                                }))(
+                                    class extends Component{
+                                        render(){
+                                            let {connectDropTarget} = this.props;
+                                            console.log(connectDropTarget);
+                                            return connectDropTarget(
+                                                <div>
+                                                    <Input />
+                                                </div>
+                                            );
+                                        }
+                                    }
                                 )
-                            })
+                            
                         }
                     </FormTarget>
                 </Col>
