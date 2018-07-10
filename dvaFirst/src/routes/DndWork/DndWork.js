@@ -6,32 +6,30 @@ const type = "move";
 
 // 高阶函数用于处理 container--target的排序功能
 function generateDndCom(com){
-    return DropTarget(type,{
-        // hover(props,monitor,component){
-        //     let {id:hoverId} = props;
-        //     let {item:{id:dragId}} = monitor.getItem();
-        //     // console.log(hoverId);
-        //     // console.log(dragId);
-        // }
+    @DropTarget(type,{
+        hover(props,monitor,component){
+            let {id:hoverId} = props;
+            let {item:{id:dragId}} = monitor.getItem();
+            console.log("这个是执行吗");
+        }
     },(connect,monitor)=>({
         connectDropTarget: connect.dropTarget(),
-    }))(
-        class extends Component{
-            render(){
-                let {connectDropTarget} = this.props;
-                console.log(connectDropTarget);
-                return connectDropTarget(
-                    <div>
-                        {com}
-                    </div>
-                );
-            }
+    }))
+    class C extends Component{
+        render(){
+            let {connectDropTarget} = this.props;
+            return connectDropTarget(
+                <div>
+                    {com}
+                </div>
+            );
         }
-    );
+    }
+    return C;
 }
 
 
-export default class DndWork extends Component {
+/* export default class DndWork extends Component {
     constructor() {
         super();
         this.state = {
@@ -99,46 +97,23 @@ export default class DndWork extends Component {
 
                     >
                         {
-                            // this.state.formArr.map(v =>{
-                            //     let C = generateDndCom(v.com);
-                            //     return (
-                            //             <div key={v.id} style={{ marginBottom: "10px" }}>
-                            //                 <C id={v.id}/>
-                            //             </div>
-                            //     )
-                            // })
-                            DropTarget(type,{
-                                    // hover(props,monitor,component){
-                                    //     let {id:hoverId} = props;
-                                    //     let {item:{id:dragId}} = monitor.getItem();
-                                    //     // console.log(hoverId);
-                                    //     // console.log(dragId);
-                                    // }
-                                },(connect,monitor)=>({
-                                    connectDropTarget: connect.dropTarget(),
-                                }))(
-                                    class extends Component{
-                                        render(){
-                                            let {connectDropTarget} = this.props;
-                                            console.log(connectDropTarget);
-                                            return connectDropTarget(
-                                                <div>
-                                                    <Input />
-                                                </div>
-                                            );
-                                        }
-                                    }
+                            this.state.formArr.map(v =>{
+                                let C = generateDndCom(v.com);
+                                return (
+                                        <div key={v.id} style={{ marginBottom: "10px" }}>
+                                            <C id={v.id}/>
+                                        </div>
                                 )
-                            
+                            })
                         }
                     </FormTarget>
                 </Col>
             </Row>
         )
     }
-}
+} */
 
-@DragSource(type, {
+/* @DragSource(type, {
     beginDrag(props, monitor, component) {
         let { item } = props;
         return {
@@ -170,6 +145,7 @@ class FormSource extends Component {
 
 @DropTarget(type, {
     hover(props, monitor, component) {
+        console.log("container也执行了哦");
         let { item } = monitor.getItem();
         let { formArr, addOuterItem } = props;
 
@@ -192,6 +168,86 @@ class FormTarget extends Component {
             <div style={{ width: "100%", height: "200px", backgroundColor: "#E6F7FF", overflow: "scroll" }}>
                 {this.props.children}
             </div>
+        );
+    }
+} */
+
+export default class DndWork extends Component {
+    constructor() {
+        super();
+        
+    }
+
+    render() {
+        return (
+            <Row type="flex" style={{ width: '100%', height: "100%", border: "1px solid #ddd" }}>
+                <Col span={8} style={{ padding: 10 }}>
+                    <Source/>
+
+                </Col>
+                <Col span={16}>
+                    <ContainerTarget>
+                        <ChildTarget/>
+                    </ContainerTarget>
+                </Col>
+            </Row>
+        );
+    }
+}
+
+@DragSource(type, {
+    beginDrag(props, monitor, component) {
+        let { item } = props;
+        return {
+            item
+        };
+    },
+    endDrag(props, monitor, component) {
+        
+    }
+}, (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+}))
+class Source extends Component{
+    render(){
+        let {connectDragSource} = this.props;
+        return connectDragSource(
+            <div style={{width:"100px",lineHeight:"40px",border:"1px solid #ddd",padding:"10px",cursor:"move"}}>aaaaaaaaaa</div>
+        )
+    }
+}
+
+
+@DropTarget(type, {
+    hover(props, monitor, component) {
+        console.log("老子就操了");
+    }
+}, (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+}))
+class ContainerTarget extends Component {
+    render() {
+        let { connectDropTarget } = this.props;
+        return connectDropTarget(
+            <div style={{ width: "100%", height: "200px", backgroundColor: "#E6F7FF", overflow: "scroll" }}>
+                {this.props.children}
+            </div>
+        );
+    }
+}
+
+@DropTarget(type, {
+    hover(props, monitor, component) {
+        console.log("儿子报错没");
+    }
+}, (connect, monitor) => ({
+    connectDropTarget: connect.dropTarget(),
+}))
+class ChildTarget extends Component{
+    render(){
+        let { connectDropTarget } = this.props;
+        return connectDropTarget(
+            <div style={{width:"100px",height:"100px",background:"#ff0"}}></div>
         );
     }
 }
