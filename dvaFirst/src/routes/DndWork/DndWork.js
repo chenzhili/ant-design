@@ -5,31 +5,45 @@ import { Row, Col, Input, Radio, DatePicker, Button, Rate } from "antd"
 const type = "move";
 
 // 高阶函数用于处理 container--target的排序功能
-function generateDndCom(com){
-    @DropTarget(type,{
+function generateDndCom(Com){
+    return DropTarget(type,{
         hover(props,monitor,component){
             let {id:hoverId} = props;
             let {item:{id:dragId}} = monitor.getItem();
-            console.log("这个是执行吗");
+            
+            const isOver = monitor.isOver({ shallow: true });
+            console.log("这个是执行吗"+hoverId+isOver);
         }
     },(connect,monitor)=>({
         connectDropTarget: connect.dropTarget(),
-    }))
-    class C extends Component{
+    }))(
+        class extends Component{
+            render(){
+                let {connectDropTarget} = this.props;
+                return connectDropTarget(
+                    <div>
+                        <Com/>
+                    </div>
+                );
+            }
+        }
+    );
+    
+}
+
+function generateClass(com){
+    return class extends Component{
         render(){
-            let {connectDropTarget} = this.props;
-            return connectDropTarget(
+            return(
                 <div>
                     {com}
                 </div>
             );
-        }
+        };
     }
-    return C;
 }
 
-
-/* export default class DndWork extends Component {
+export default class DndWork extends Component {
     constructor() {
         super();
         this.state = {
@@ -69,11 +83,11 @@ function generateDndCom(com){
 
     render() {
         const sourceArr = [
-            { id: 0, name: "aaaaa", com: <Input /> },
-            { id: 1, name: "bbbbb", com: <Radio>bbb</Radio> },
-            { id: 2, name: "ccccc", com: <DatePicker /> },
-            { id: 3, name: "ddddd", com: <Button>dddd</Button> },
-            { id: 4, name: "eeeee", com: <Rate /> },
+            { id: 0, name: "aaaaa", com: generateClass(<Input />) },
+            { id: 1, name: "bbbbb", com: generateClass(<Radio>bbb</Radio>) },
+            { id: 2, name: "ccccc", com: generateClass(<DatePicker />) },
+            { id: 3, name: "ddddd", com: generateClass(<Button>dddd</Button>) },
+            { id: 4, name: "eeeee", com: generateClass(<Rate />) },
         ]
         return (
             <Row type="flex" style={{ width: '100%', height: "100%", border: "1px solid #ddd" }}>
@@ -111,9 +125,9 @@ function generateDndCom(com){
             </Row>
         )
     }
-} */
+}
 
-/* @DragSource(type, {
+@DragSource(type, {
     beginDrag(props, monitor, component) {
         let { item } = props;
         return {
@@ -145,13 +159,14 @@ class FormSource extends Component {
 
 @DropTarget(type, {
     hover(props, monitor, component) {
-        console.log("container也执行了哦");
+        
         let { item } = monitor.getItem();
         let { formArr, addOuterItem } = props;
-
+        const isOver = monitor.isOver({ shallow: true });
         // 判断是否存在
         let isExist = formArr.filter(v => v.id == item.id);
-        if (!isExist.length) {
+        isOver && console.log("container也执行了哦");
+        if (!isExist.length && isOver) {
             addOuterItem({
                 id: item.id,
                 com: item.com
@@ -170,7 +185,30 @@ class FormTarget extends Component {
             </div>
         );
     }
-} */
+}
+
+
+// 测试没问题的
+/* function test(Com){
+    return DropTarget(type, {
+        hover(props, monitor, component) {
+            console.log("儿子报错没");
+        }
+    }, (connect, monitor) => ({
+        connectDropTarget: connect.dropTarget(),
+    }))(
+        class extends Component{
+            render(){
+                const {connectDropTarget} = this.props;
+                return connectDropTarget(
+                    <div>
+                        <Com/>
+                    </div>
+                );
+            }
+        }
+    );
+}
 
 export default class DndWork extends Component {
     constructor() {
@@ -179,6 +217,8 @@ export default class DndWork extends Component {
     }
 
     render() {
+        
+        let testArr = [ChildTarget]
         return (
             <Row type="flex" style={{ width: '100%', height: "100%", border: "1px solid #ddd" }}>
                 <Col span={8} style={{ padding: 10 }}>
@@ -187,7 +227,12 @@ export default class DndWork extends Component {
                 </Col>
                 <Col span={16}>
                     <ContainerTarget>
-                        <ChildTarget/>
+                        {
+                            testArr.map(v=>{
+                                let C = test(v);
+                                return <C/>
+                            })
+                        }
                     </ContainerTarget>
                 </Col>
             </Row>
@@ -235,19 +280,10 @@ class ContainerTarget extends Component {
         );
     }
 }
-
-@DropTarget(type, {
-    hover(props, monitor, component) {
-        console.log("儿子报错没");
-    }
-}, (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-}))
 class ChildTarget extends Component{
     render(){
-        let { connectDropTarget } = this.props;
-        return connectDropTarget(
+        return (
             <div style={{width:"100px",height:"100px",background:"#ff0"}}></div>
         );
     }
-}
+} */
