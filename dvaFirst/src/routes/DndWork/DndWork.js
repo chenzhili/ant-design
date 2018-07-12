@@ -4,6 +4,29 @@ import { Row, Col, Input, Radio, DatePicker, Button, Rate } from "antd"
 
 const type = "move";
 
+/**
+ * 理清整个思路：在哪做啥操作
+ * 目标：实现表单的拖拽排序，并且能够 灵活的 相应事件；
+ 序列号：
+    a、拖动源
+    b、容器 目标容器
+    c、表单项，既为拖动源，也为目标容器
+
+a中需要做的事：
+    关键的事件：
+        benginDrag:用于 记录 当前 拖动目标的信息，这里返回 的信息 可以在 其他 API 中通过 monitor.getIem()获取；
+        endDrag：这个事件待定，因为需要时时 反应 是否在 container 中，可能会在 hover中判断；(第二阶段，试了不行，由于不在 target 里，无法从hover中监听是否 出来)
+b中需要做的事：
+    关键事件：
+        hover：用于 时时 判断 项目是否 进入 container 且 没有 进入 表单项，用 moniter.isOver({shallow:true})精确判断进入的位置
+c中需要做的事：既是拖动源也是 目标容器
+    关键事件：
+        beginDrage:跟上面一样
+        hover:这里跟上面差不多，也需要排序
+
+ * 
+ */
+
 // 高阶函数用于处理 container--target的排序功能
 function generateDndCom(Com){
     return DropTarget(type,{
@@ -12,7 +35,6 @@ function generateDndCom(Com){
             let {item:{id:dragId}} = monitor.getItem();
             
             const isOver = monitor.isOver({ shallow: true });
-            console.log("这个是执行吗"+hoverId+isOver);
         }
     },(connect,monitor)=>({
         connectDropTarget: connect.dropTarget(),
@@ -108,7 +130,8 @@ export default class DndWork extends Component {
                     <FormTarget
                         formArr={this.state.formArr}
                         addOuterItem={this.addOuterItem.bind(this)}
-
+                        DeleteItem={this.DeleteItem.bind(this)}
+                        findOuterItem={this.findOuterItem.bind(this)}
                     >
                         {
                             this.state.formArr.map(v =>{
@@ -133,7 +156,7 @@ export default class DndWork extends Component {
         return {
             item
         };
-    },
+     },
     endDrag(props, monitor, component) {
         let { findOuterItem, DeleteItem } = props;
         let didDrop = monitor.didDrop();
@@ -161,11 +184,13 @@ class FormSource extends Component {
     hover(props, monitor, component) {
         
         let { item } = monitor.getItem();
-        let { formArr, addOuterItem } = props;
+        let { formArr, addOuterItem,DeleteItem,findOuterItem } = props;
+        /***
+         * 这里加了 shallow:true 就是相当于 阻止冒泡一样，只会触发 当前 hover 事件，不会 冒泡到 下面；
+         */
         const isOver = monitor.isOver({ shallow: true });
         // 判断是否存在
         let isExist = formArr.filter(v => v.id == item.id);
-        isOver && console.log("container也执行了哦");
         if (!isExist.length && isOver) {
             addOuterItem({
                 id: item.id,

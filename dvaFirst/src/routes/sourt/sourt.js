@@ -33,7 +33,7 @@ function generateCom(com) {
         drop() {
             console.log("item", "发生没");
         },
-        canDrop() {0
+        canDrop() {
             // 为 false说明当前的 target 不能 放东西，这个对于 item 是精髓
             //  Unlike drop(), this method will be called even if canDrop() is defined and returns false.
             // 说明 在 这个 为 false的时候，drop不会发生，hover还是为执行
