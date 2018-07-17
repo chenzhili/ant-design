@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { DragSource, DropTarget, DragDropContext } from 'react-dnd'
+import { DragSource, DropTarget } from 'react-dnd'
 import { Row, Col, Input, Radio, DatePicker, Button, Rate } from "antd"
 
 const type = "move";
@@ -31,10 +31,23 @@ c中需要做的事：既是拖动源也是 目标容器
 function generateDndCom(Com){
     return DropTarget(type,{
         hover(props,monitor,component){
-            let {id:hoverId} = props;
-            let {item:{id:dragId}} = monitor.getItem();
-            
+            let {id:hoverId,findOuterItem,sortItems} = props;
+            // let { item:{id:dragId,com} } = monitor.getItem();
+            let {item} = monitor.getItem();
+            let {id:dragId} = item;
             const isOver = monitor.isOver({ shallow: true });
+            const isExist = findOuterItem(dragId);
+            let {index:currentIndex} = findOuterItem(hoverId);
+            if(isOver && dragId != hoverId){
+                if(isExist){
+                    // 删除原有位置，在插入到新的位置
+                    let {index:originIndex} = isExist;
+                    sortItems(true,originIndex,currentIndex,{com:item.com,id:item.id});
+                }else{
+                    // 查到 hoverId 的位置 直接插入
+                    sortItems(false,currentIndex,item,{com:item.com,id:item.id});
+                }
+            }
         }
     },(connect,monitor)=>({
         connectDropTarget: connect.dropTarget(),
@@ -102,14 +115,29 @@ export default class DndWork extends Component {
             formArr: tempArr
         });
     }
+    // 对于 放入 target 的 项目的 判断
+    sortItems(isExist,...arg){
+        let tempArr = [...this.state.formArr];
+        if(isExist){
+            let [originIndex,currentIndex,item] = arg;
+            tempArr.splice(originIndex,1);
+            tempArr.splice(currentIndex,0,item);
+        }else{
+            let [currentIndex,item] = arg;
+            tempArr.splice(currentIndex,0,item);
+        }
+        this.setState({
+            formArr:tempArr
+        });
+    }
 
     render() {
         const sourceArr = [
-            { id: 0, name: "aaaaa", com: generateClass(<Input />) },
-            { id: 1, name: "bbbbb", com: generateClass(<Radio>bbb</Radio>) },
-            { id: 2, name: "ccccc", com: generateClass(<DatePicker />) },
-            { id: 3, name: "ddddd", com: generateClass(<Button>dddd</Button>) },
-            { id: 4, name: "eeeee", com: generateClass(<Rate />) },
+            { id: 0, name: "aaaaa", com: generateClass(<Input style={{cursor: "move" }}/>) },
+            { id: 1, name: "bbbbb", com: generateClass(<Radio style={{cursor: "move" }}>bbb</Radio>) },
+            { id: 2, name: "ccccc", com: generateClass(<DatePicker style={{cursor: "move" }} />) },
+            { id: 3, name: "ddddd", com: generateClass(<Button style={{cursor: "move" }}>dddd</Button>) },
+            { id: 4, name: "eeeee", com: generateClass(<Rate style={{cursor: "move" }} />) },
         ]
         return (
             <Row type="flex" style={{ width: '100%', height: "100%", border: "1px solid #ddd" }}>
@@ -134,11 +162,15 @@ export default class DndWork extends Component {
                         findOuterItem={this.findOuterItem.bind(this)}
                     >
                         {
-                            this.state.formArr.map(v =>{
+                            this.state.formArr.map((v,i) =>{
                                 let C = generateDndCom(v.com);
                                 return (
-                                        <div key={v.id} style={{ marginBottom: "10px" }}>
-                                            <C id={v.id}/>
+                                        <div key={i} style={{ marginBottom: "10px" }}>
+                                            <C 
+                                            id={v.id}
+                                            findOuterItem={this.findOuterItem.bind(this)}
+                                            sortItems={this.sortItems.bind(this)}
+                                            />
                                         </div>
                                 )
                             })

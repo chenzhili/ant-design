@@ -22,7 +22,7 @@ class DndAgain extends Component {
     _judgeIsOk(toX, toY) {
         let dx = this.state.x - toX;
         let dy = this.state.y - toY;
-        return (Math.abs(dx) == 1 && Math.abs(dy) == 2) || (Math.abs(dx) == 2 && Math.abs(dy) == 1);
+        return (Math.abs(dx) === 1 && Math.abs(dy) === 2) || (Math.abs(dx) === 2 && Math.abs(dy) === 1);
     }
     // 状体提升
     moveKnight(toX, toY) {
@@ -58,7 +58,7 @@ class Board extends Component {
         let x = i % 8;
         let y = Math.floor(i / 8);
 
-        let black = (x + y) % 2 == 1;
+        let black = (x + y) % 2 === 1;
         return (
             <div 
             key={i} 
@@ -71,7 +71,7 @@ class Board extends Component {
             >
                 <Square black={black} x={x} y={y} moveKnight={this.props.moveKnight} stateHover={this.state.stateHover}>
                     {
-                        x == this.props.knightPosition[0] && y == this.props.knightPosition[1] && <Knight black={black} />
+                        x === this.props.knightPosition[0] && y == this.props.knightPosition[1] && <Knight black={black} />
                     }
                 </Square>
             </div>

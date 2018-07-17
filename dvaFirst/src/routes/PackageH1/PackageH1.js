@@ -6,7 +6,6 @@ import React from 'react';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext,DragSource,DropTarget  } from 'react-dnd';
 import { Tabs, Button } from 'antd';
-console.log(Tabs);
 const TabPane = Tabs.TabPane;
 
 

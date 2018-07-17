@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { DragSource, DropTarget, DragDropContext } from 'react-dnd'
+import { DragSource, DropTarget } from 'react-dnd'
 
 
 /**

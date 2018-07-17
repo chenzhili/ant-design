@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { DragSource, DropTarget, DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend';
+import { DragSource, DropTarget } from 'react-dnd'
+// import HTML5Backend from 'react-dnd-html5-backend';
 import { Row, Col, Input, Radio } from "antd"
-import { relativeTimeThreshold } from "moment";
+// import { relativeTimeThreshold } from "moment";
 
 
 /* 
@@ -17,15 +17,15 @@ import { relativeTimeThreshold } from "moment";
 在容器中调整顺序 根上面的 实现方式一样，需要找到 拖动源的id 和 拖动对象的 Id 对 数组操作就可以了；
 
 */
-
+/* 
 function Guid() {
     function S4() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     }
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-}
+} */
 
-let currentId = -1;
+// let currentId = -1;
 // 添加一个高阶函数
 // 这高阶函数应该 即是 拖动源，也是拖动目标，才可以知道对应的 位置 以及让他移动；
 function generateCom(com) {
