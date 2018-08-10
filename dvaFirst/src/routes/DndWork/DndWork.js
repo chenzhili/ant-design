@@ -203,6 +203,7 @@ export default class DndWork extends Component {
         };
     },
     endDrag(props, monitor, component) {
+        console.log("跟target的Drop是一回事吗");
         let { findOuterItem, DeleteItem } = props;
         let didDrop = monitor.didDrop();
         let { item: { id } } = monitor.getItem();
@@ -226,6 +227,9 @@ class FormSource extends Component {
 }
 
 @DropTarget(type, {
+    drop(props,monitor,component){
+        console.log("事件发生");
+    },
     hover(props, monitor, component) {
 
         let { item } = monitor.getItem();
