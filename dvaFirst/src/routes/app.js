@@ -19,6 +19,7 @@ import Sourt from "./sourt/sourt";
 import DndTest from "./DndTest/DndTest"
 // 正式的东西
 import DndWork from "./DndWork/DndWork"
+import DndAdvance from "./DndAdvance/DndAdvance"
 
 const {Header,Sider,Content,Footer} = Layout;
 /* const Dashboard = (props)=>{
@@ -117,7 +118,8 @@ class App extends React.Component{
         {type:"work-again",value:"nav 4"},
         {type:"sourt",value:"nav 5"},
         {type:"DndTest",value:"nav 6"},
-        {type:"DndWork",value:"DndWork"}
+        {type:"DndWork",value:"DndWork"},
+        {type:"DndAdvance",value:"DndAdvance"}
       ];
       return (
         <Layout className={styles.layout}>
@@ -159,7 +161,7 @@ class App extends React.Component{
               </div>
             </Header>
 
-            <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+            <Content style={{ position:"relative",margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
                 <Switch>
                   <Route path={this.props.match.path} exact render={()=><Redirect to={`${this.props.match.path}/dashboard`}/>}/>
                   <Route path={`${this.props.match.path}/dashboard`} component={Dashboard}/>
@@ -169,6 +171,7 @@ class App extends React.Component{
                   <Route path={`${this.props.match.path}/sort`} component={Sourt}/>
                   <Route path={`${this.props.match.path}/DndTest`} component={DndTest}/>
                   <Route path={`${this.props.match.path}/DndWork`} component={DndWork}/>
+                  <Route path={`${this.props.match.path}/DndAdvance`} component={DndAdvance}/>
                 </Switch>
             </Content>
 
