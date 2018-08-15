@@ -19,7 +19,51 @@ import Sourt from "./sourt/sourt";
 import DndTest from "./DndTest/DndTest"
 // 正式的东西
 import DndWork from "./DndWork/DndWork"
+// 网格式布局的进阶
 import DndAdvance from "./DndAdvance/DndAdvance"
+// 信息验证
+import Validation from "async-validation";
+import Validator from "async-validator";
+console.log(Validator);
+
+
+/* 测试 验证 */
+let data = {
+  username:"",
+  tel:"138765676",
+  email:"1111@qq.com"
+}
+let des = {
+  username:{required:true,type:"string",message:"填写正确的姓名"},
+  tel:{required:true,type:"string",pattern: /^1[3,5,6,7,9][0-9]{9}$/},
+  // email:{required:true,type:"string",pattern:Validator.pattern.email}
+}
+var validator = new Validator(des);
+validator.validate(data,{firstFields:true},(err,fields)=>{
+  if(err){
+    console.log(err);
+    return;
+  }
+  console.log("ok");
+});
+
+let rules = {
+  username:[
+    {validator:"notEmpty",message:"用户是必填项"}
+  ],
+  tel:[
+    {validator: 'regexp', regexp: /^1[3,5,6,7,9][0-9]{9}$/,message:"电话错了"}
+  ],
+  email:[
+    {validator:"email",message:"填写正确的邮箱"}
+  ]
+}
+let v = new Validation(data,rules,{});
+v.validate((err)=>{
+  if(err){console.log(err);return;};
+  console.log("ok");
+});
+
 
 const {Header,Sider,Content,Footer} = Layout;
 /* const Dashboard = (props)=>{
@@ -119,7 +163,7 @@ class App extends React.Component{
         {type:"sourt",value:"nav 5"},
         {type:"DndTest",value:"nav 6"},
         {type:"DndWork",value:"DndWork"},
-        {type:"DndAdvance",value:"DndAdvance"}
+        {type:"DndAdvance",value:'DndAdvance'}
       ];
       return (
         <Layout className={styles.layout}>
@@ -161,7 +205,7 @@ class App extends React.Component{
               </div>
             </Header>
 
-            <Content style={{ position:"relative",margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+            <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
                 <Switch>
                   <Route path={this.props.match.path} exact render={()=><Redirect to={`${this.props.match.path}/dashboard`}/>}/>
                   <Route path={`${this.props.match.path}/dashboard`} component={Dashboard}/>

@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "antd": "^3.3.0",
+    "async-validation": "^0.1.0",
+    "async-validator": "^1.8.5",
     "babel-plugin-import": "^1.6.7",
     "dva": "^2.1.0",
     "immutability-helper": "^2.7.0",

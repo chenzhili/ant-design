@@ -240,7 +240,7 @@ class FormTarget extends Component {
     render() {
         let { connectDropTarget } = this.props;
         return connectDropTarget(
-            <div style={{ width: "100%",height:"100%", backgroundColor: "#E6F7FF", overflow: "scroll",display:"grid",gridTemplateColumns:"33% 33% 33%",justifyItems:"center",alignItems:"center" }}>
+            <div style={{ width: "100%",height:"100%", backgroundColor: "#E6F7FF", display:"grid",gridTemplateColumns:"33% 33% 33%",justifyItems:"center",alignItems:"center" }}>
                 {this.props.children}
             </div>
         );
