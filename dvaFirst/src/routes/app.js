@@ -24,22 +24,28 @@ import DndAdvance from "./DndAdvance/DndAdvance"
 // 信息验证
 import Validation from "async-validation";
 import Validator from "async-validator";
-console.log(Validator);
+// console.log(Validator);
+
+// 测试table
+import TestTable from "./table/table"
 
 
 /* 测试 验证 */
 let data = {
-  username:"",
-  tel:"138765676",
+  username:"aa",
+  tel:"",
   email:"1111@qq.com"
 }
 let des = {
   username:{required:true,type:"string",message:"填写正确的姓名"},
-  tel:{required:true,type:"string",pattern: /^1[3,5,6,7,9][0-9]{9}$/},
+  tel:[
+    {required:true,message:"必填"},
+    {pattern: /^1[3,5,6,7,9][0-9]{9}$/,message:"填写正确的手机号"}
+  ],
   // email:{required:true,type:"string",pattern:Validator.pattern.email}
 }
 var validator = new Validator(des);
-validator.validate(data,{firstFields:true},(err,fields)=>{
+validator.validate(data,{first:true},(err,fields)=>{
   if(err){
     console.log(err);
     return;
@@ -156,6 +162,7 @@ class App extends React.Component{
     render() {
       console.log(window.location.href);
       const menuList = [
+        {type:"TestTable",value:"table"},
         {type:"user",value:"nav 1"},
         {type:"video-camera",value:"nav 2"},
         {type:"upload",value:"nav 3"},
@@ -216,6 +223,7 @@ class App extends React.Component{
                   <Route path={`${this.props.match.path}/DndTest`} component={DndTest}/>
                   <Route path={`${this.props.match.path}/DndWork`} component={DndWork}/>
                   <Route path={`${this.props.match.path}/DndAdvance`} component={DndAdvance}/>
+                  <Route path={`${this.props.match.path}/TestTable`} component={TestTable}/>
                 </Switch>
             </Content>
 

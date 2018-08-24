@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types'
-import { Row, Col, Layout, Menu, Icon } from "antd";
+import { Row, Col, Layout, Menu, Icon, Form, Input } from "antd";
 import styles from "./Dashboard.less";
 import logo from "./logo.svg"
 import nprogress from "nprogress";
@@ -12,8 +12,9 @@ import InnerChildSchool from "../../components/immutable/InnerChildSchool";
 import update from 'immutability-helper';
 
 const { Header, Sider, Content, Footer } = Layout;
+const FormItem = Form.Item;
 class Dashboard extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     console.log(this.props);
   }
@@ -39,12 +40,12 @@ class Dashboard extends React.Component {
         }
       }
     },
-    test:1
+    test: 1
   }
   // 变量提升
-  toTest(a){
+  toTest(a) {
     this.setState({
-      toTest:a
+      toTest: a
     });
   }
 
@@ -103,16 +104,21 @@ class Dashboard extends React.Component {
         <ChildHome information={this.state.information.home} />
         <button onClick={this.changeSchool}>点击我修改School的值</button>
         <button onClick={this.changeHome}>点击我修改home的值</button>
-        <button onClick={()=>{this.props.history.push("/app/dashboard");}}>push相同的路由</button>
-        <T toTest={this.toTest.bind(this)}/>
+        <button onClick={() => { this.props.history.push("/app/dashboard"); }}>push相同的路由</button>
+        <T toTest={this.toTest.bind(this)} />
+        <Form>
+          <FormItem validateStatus="error" help="Should be combination of numbers & alphabets" hasFeedback>
+            <Input />
+          </FormItem>
+        </Form>
       </div>
     )
   }
 }
 
-function T(props){
+function T(props) {
   return (
-    <div onClick={()=>{props.toTest(3)}}>点我状态提升</div>
+    <div onClick={() => { props.toTest(3) }}>点我状态提升</div>
   );
 }
 
