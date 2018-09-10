@@ -91,7 +91,7 @@ class TestTable extends Component {
             <div>
                 <Switch onChange={e=>{console.log(e);this.setState({
                     isShow:e
-                })}}></Switch>
+                })}}/>
                 <Table
                 columns={columns}
                 dataSource={data}

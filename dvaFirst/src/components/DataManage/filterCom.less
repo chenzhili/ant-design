@@ -1,0 +1,78 @@
+.inlineBlock{
+    display:inline-block;
+    vertical-align:middle;
+}
+.filterContainer{
+    padding:10px 20px;
+    .filterHeader{
+        &:after{
+            content:"";
+            display:table;
+            clear:both;
+        }
+        line-height:30px;
+        .filterHeaderDes{
+            max-width:280px;
+            white-space: nowrap;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            .filterTitle{
+                max-width:150px;
+                white-space: nowrap;
+                overflow:hidden;
+                text-overflow: ellipsis;
+            }
+            .filterCompare{
+                height:30px;
+                line-height:30px;
+                vertical-align: middle;
+            }
+        }
+        .filterIcon{
+            font-size:20px;
+            float:right;
+            line-height:34px;
+            color:rgba(0, 0, 0, 0.65);
+            margin-top:5px;
+        }
+    }
+    .filterContent{
+        .filterItem{
+            width:280px;
+            margin-bottom:10px;
+            height:36px;
+            &.filterItemSelect{
+                border: 1px solid #d9d9d9;
+                border-radius: 4px;
+            }
+        }
+        .filterNumRange{
+            width:280px;
+            display:flex;
+            height:36px;
+            &>div{
+                line-height:36px;
+                color:#000;
+            }
+            .filterNumRangeItem{
+                flex:1;
+            }
+        }
+        .filterLocation{
+            display:flex;
+            width:280px;
+            flex-wrap:nowrap;
+            .filterLocationItem{
+                flex:1;
+                height:36px;
+                &.filterItemSelect{
+                    border: 1px solid #d9d9d9;
+                    border-radius: 4px;
+                }
+                &:not(:last-child){
+                    margin-right:4px;
+                }
+            }
+        }
+    }
+}

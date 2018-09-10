@@ -12,6 +12,22 @@ import zhCN from 'antd/lib/locale-provider/zh_CN';
 
 function RouterConfig({history,app}) { 
   // console.log(Dashboard);
+  let App = dynamic({ 
+    app,
+    component:()=>import("./routes/app"),
+    // models:()=>[import("./models/Dashboard")] 
+  })
+  let DataManage = dynamic({
+    app,
+    component:()=>import("./routes/DataManage/DataManage"),
+    models:()=>[import("./models/DataManage/DataManage")]
+  });
+  // console.log(app);
+  function Main(props){
+    return (
+      <App {...props} DataManage={DataManage}></App>
+    );
+  }
   return (
     // <LocaleProvider locale={zhCN}>
     //   <Router history={history}>
@@ -60,11 +76,7 @@ function RouterConfig({history,app}) {
       <Router history={history}>
         <Switch>
           <Route path="/" exact render={()=>(<Redirect to="/app"/>)}></Route>
-          <Route path="/app" component={dynamic({ 
-              app,
-              component:()=>import("./routes/app"),
-              // models:()=>[import("./models/Dashboard")] 
-          })}/>
+          <Route path="/app" component={Main}/>
           <Route paht="/login" component={dynamic({
             app,
             component:()=>import("./routes/Login/Login"),
