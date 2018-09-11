@@ -220,7 +220,7 @@ class App extends React.Component {
             </div>
           </Header>
 
-          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,position:"relative" }}>
             <Switch>
               <Route path={this.props.match.path} exact render={() => <Redirect to={`${this.props.match.path}/dashboard`} />} />
               <Route path={`${this.props.match.path}/dashboard`} component={Dashboard} />

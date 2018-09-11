@@ -18,6 +18,7 @@ class DataManage extends Component {
             isShowBatchOper: 0, // 0为隐藏 1为显示 批量操作 2为 批量删除
             allScreen: false,
             operFeild: false,
+            openCondition:false,
             selectedRows: [], //选中项数组
         }
         this.getTableContainer = ele => {
@@ -113,11 +114,20 @@ class DataManage extends Component {
             allScreen: !this.state.allScreen
         })
     }
+    // 显示筛选
+    showFilterCondition(e){
+        e.stopPropagation();
+        this.setState({
+            openCondition:true,
+            operFeild: false
+        });
+    }
     // 显示字段
     showFeildNameOper(e) {
         e.stopPropagation();
         this.setState({
-            operFeild: !this.state.operFeild
+            operFeild: true,
+            openCondition:false
         });
     }
     // 清空所有记录
@@ -185,9 +195,10 @@ class DataManage extends Component {
     // 点中container
     containerClick(e){
         e.stopPropagation();
-        /* this.setState({
-            operFeild:false
-        }); */
+        this.setState({
+            operFeild:false,
+            openCondition:false
+        });
     }
 
     // 对于筛选条件 值 和 关系改变的 函数
@@ -212,7 +223,7 @@ class DataManage extends Component {
         let columns = JSON.parse(JSON.stringify(this.props.dataManage.columns));
         columns = this._filterColumns(columns);
         // console.log("渲染事件",this.state.x);
-        let { isShowBatchOper, allScreen, operFeild } = this.state;
+        let { isShowBatchOper, allScreen, operFeild,openCondition } = this.state;
         let menuItem = menuOperate.map((v, i) => (
             <Menu.Item key={i} style={{ fontSize: "12px" }}>
                 <Icon type={v.icon} />{v.name}
@@ -293,15 +304,15 @@ class DataManage extends Component {
                         <div style={{ width: "4%" }} className={styles.cooperateItem} title={allScreen ? "取消全屏" : "全屏"} onClick={this.showAllScreen.bind(this)}>
                             <Icon type="scan" style={{ fontSize: "16px" }} />
                         </div>
-                        <div className={styles.cooperateItem} style={{ position: "relative" }}>
+                        <div className={styles.cooperateItem} style={{ position: "relative" }} onClick={this.showFeildNameOper.bind(this)}>
                             <Icon type="eye" />
-                            <span className={styles.cooperateText} onClick={this.showFeildNameOper.bind(this)}>显示字段</span>
+                            <span className={styles.cooperateText}>显示字段</span>
                             {operFeild && <SearchName {...this.props}/>}
                         </div>
-                        <div className={styles.cooperateItem} style={{ position: "relative" }}>
+                        <div className={styles.cooperateItem} style={{ position: "relative" }} onClick={this.showFilterCondition.bind(this)}>
                             <Icon type="filter" />
                             <span className={styles.cooperateText}>筛选条件</span>
-                            <FilterCondition {...conditionProps}/>
+                            {openCondition && <FilterCondition {...conditionProps}/>}
                         </div>
                     </div>
                 </div>
