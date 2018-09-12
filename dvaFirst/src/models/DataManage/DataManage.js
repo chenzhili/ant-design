@@ -119,7 +119,8 @@ export default {
                 width: "200px",
                 type:"number",
                 id:Guid(),
-                sorter: (a, b) => a.age - b.age,
+                // sorter: (a, b) => a.age - b.age,
+                souter:true,//这是用于 后台请求的写法，在 onChange 事件中 去 做 异步请求
             }, {
                 title: 'Address',
                 children: [{
