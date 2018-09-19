@@ -1,6 +1,9 @@
 import React, { Component } from "react"
 import { Table, Switch, Input, Button, Popconfirm, Form, Select } from "antd";
-import styles from "./table.css";
+import styles from "./table.less";
+import GC from "@grapecity/spread-sheets" 
+console.log(GC);
+// GC.Spread.Sheets.LicenseKey = "123213213";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -264,14 +267,15 @@ class TestCell extends Component {
                                 }
                             }
                         </EditableContext.Consumer>
-                    ):this.props.children
+                    ) : this.props.children
                 }
             </td >
         )
     }
 }
 
-class TestTable extends Component {
+// 自定制 table样式
+class TestTableCustom extends Component {
     render() {
         let dataSource = [{
             key: '0',
@@ -322,12 +326,62 @@ class TestTable extends Component {
                 components={components}
                 rowClassName={() => 'editable-row'}
                 bordered
-                scroll={{ x:"130%"}}
+                scroll={{ x: "130%" }}
                 dataSource={dataSource}
                 columns={columns}
             />
         );
     }
 }
+
+class TestTable extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            spread: null
+        }
+    }
+    componentDidMount() {
+        console.log(this.div);
+        this.state.spread = new GC.Spread.Sheets.Workbook(this.div, { sheetCount: 1 });
+        let sheet = this.state.spread.getSheet(0);
+        let person = { name: "tom", age: 12 };
+        let source = new GC.Spread.Sheets.Bindings.CellBindingSource(person);
+        this.state.spread.options.tabStripVisible = false;
+        this.state.spread.options.showVerticalScrollbar = true;
+        sheet.setBindingPath(0, 0, "name");
+        sheet.setBindingPath(1, 0, "age");
+        sheet.setDataSource(source);
+        sheet.getCell(2, 1).text("Name");
+        sheet.getCell(3, 1).text("Age");
+        sheet.getCell(4, 1).text("Gender");
+        sheet.getCell(5, 1).text("Address.Postcode");
+        sheet.addSpan(1, 1, 1, 2);
+        sheet.getRange(1, 1, 1, 2).text("Person Card")
+        sheet.setColumnWidth(1, 120);
+        sheet.setColumnWidth(2, 120);
+        sheet.getRange(1, 1, 1, 2).backColor("rgb(20, 140, 1218)")
+        sheet.getRange(2, 1, 4, 1).backColor("rgb(169, 238, 243)")
+        sheet.getRange(2, 2, 4, 1).backColor("rgb(247, 197, 113)")
+        sheet.getRange(1, 1, 5, 2).setBorder(new GC.Spread.Sheets.LineBorder("Black", GC.Spread.Sheets.LineStyle.thin), {
+            all: true
+        });
+        sheet.getRange(2, 1, 4, 2).setBorder(new GC.Spread.Sheets.LineBorder("Black", GC.Spread.Sheets.LineStyle.dotted), {
+            inside: true
+        });
+        sheet.getRange(1, 1, 5, 2).hAlign(GC.Spread.Sheets.HorizontalAlign.center);
+        sheet.options.rowHeaderVisible = false;
+        sheet.options.colHeaderVisible = false;
+        
+        this.state.spread.invalidateLayout();
+        this.state.spread.repaint();
+    }
+    render() {
+        return (
+            <div style={{ width: "90%", height: "360px", border: "1px solid gray" }} ref={node => this.div = node}></div>
+        );
+    }
+}
+
 
 export default TestTable;

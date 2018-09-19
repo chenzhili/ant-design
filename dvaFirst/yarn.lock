@@ -866,6 +866,10 @@
     lodash "^4.17.5"
     to-fast-properties "^2.0.0"
 
+"@grapecity/spread-sheets@^11.2.5":
+  version "11.2.5"
+  resolved "https://registry.yarnpkg.com/@grapecity/spread-sheets/-/spread-sheets-11.2.5.tgz#e3638b391f060caa0c3ba1cf819688e8a0f26df8"
+
 "@types/history@*":
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.6.2.tgz#12cfaba693ba20f114ed5765467ff25fdf67ddb0"

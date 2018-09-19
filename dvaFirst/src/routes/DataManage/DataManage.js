@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import { Table, Icon, Select, Button, Input, Dropdown, Menu, Modal, message } from "antd"
 import { connect } from 'dva';
 import styles from "./DataManage.less"
-import {List,Map}from "immutable"
+import {List,Map,is}from "immutable"
 
 import SearchName from "../../components/DataManage/searchName";
 import FilterCondition from "../../components/DataManage/filterCondition"
+import ImportFile from "../../components/DataManage/ImportFile";
+import TableCom from "../../components/DataManage/TableCom"
 const Option = Select.Option;
 const confirm = Modal.confirm;
 
@@ -14,47 +16,34 @@ class DataManage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            x: "100%",
             isShowBatchOper: 0, // 0为隐藏 1为显示 批量操作 2为 批量删除
             allScreen: false,
             operFeild: false,
             openCondition:false,
             selectedRows: [], //选中项数组
-        }
-        this.getTableContainer = ele => {
-            if (!ele) return;
-            this.table = ele.clientWidth;
+            isShowImportModal:false, // 是否显示 导入页面
         }
     }
-    // 这个发生在 渲染之后，这里用来更新我的 x值
-    getSnapshotBeforeUpdate(prevProps, prevState) {
-        if (this.table) {
-            let { columns } = this.props.dataManage;
-            let ActualyWidth = this._getActualyWidth(columns);
-            let percent = ActualyWidth / this.table * 100;
-            return percent;
+    shouldComponentUpdate(nextProps={}, nextState={}) {
+        const thisProps = this.props || {}, thisState = this.state || {};
+
+        if (Object.keys(thisProps).length !== Object.keys(nextProps).length ||
+            Object.keys(thisState).length !== Object.keys(nextState).length) {
+            return true;
         }
-        return null;
-    }
-    // 这个是跟上面那个生命周期一起使用
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if(snapshot){
-            // console.log("更新时间",snapshot);
-            this.state.x = `${snapshot < 100 ? 100 : Math.ceil(snapshot)}%`;
+
+        for (const key in nextProps) {
+            if (thisProps[key] !== nextProps[key] || !is(thisProps[key], nextProps[key])) {
+                return true;
+            }
         }
-    }
-    // 这个用于当 props于 state有关的时候
-    static getDerivedStateFromProps(nextProps, prevState) {
-        return null;
-    }
-    componentDidMount() {
-        if (!this.table) return;
-        let { columns } = this.props.dataManage;
-        let ActualyWidth = this._getActualyWidth(columns);
-        let percent = ActualyWidth / this.table * 100;
-        this.setState({
-            x: `${percent < 100 ? 100 : Math.ceil(percent)}%`
-        });
+
+        for (const key in nextState) {
+            if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+                return true;
+            }
+        }
+        return false;
     }
     _getActualyWidth(columns) {
         if (!columns.length) return;
@@ -69,6 +58,11 @@ class DataManage extends Component {
             }
         });
         return total;
+    }
+    operateImportModal(boolean){
+        this.setState({
+            isShowImportModal:boolean
+        });
     }
     // 过滤columns,在页面的显示
     _filterColumns(columns) {
@@ -217,13 +211,20 @@ class DataManage extends Component {
             }
         });
     }
+    // 更改 导入文件步骤
+    changeSteps(steps){
+        this.props.dispatch({
+            type:"dataManage/changeSteps",
+            payload:{steps}
+        });
+    }
     render() {
-        let { tableData, menuOperate } = this.props.dataManage;
+        let { tableData, menuOperate,importSteps } = this.props.dataManage;
         // 注意深层对象引用
         let columns = JSON.parse(JSON.stringify(this.props.dataManage.columns));
         columns = this._filterColumns(columns);
         // console.log("渲染事件",this.state.x);
-        let { isShowBatchOper, allScreen, operFeild,openCondition } = this.state;
+        let { isShowBatchOper, allScreen, operFeild,openCondition,isShowImportModal } = this.state;
         let menuItem = menuOperate.map((v, i) => (
             <Menu.Item key={i} style={{ fontSize: "12px" }}>
                 <Icon type={v.icon} />{v.name}
@@ -241,8 +242,16 @@ class DataManage extends Component {
             filterFeildChange:this.filterFeildChange.bind(this),
             dispatch:this.props.dispatch
         }
+        // 传入 导入文件 的 props
+        let importProps = {
+            importSteps,
+            isShowImportModal,
+            changeSteps:this.changeSteps.bind(this),
+            operateImportModal:this.operateImportModal.bind(this)
+        }
         return (
             <div className={`${styles.content} ${allScreen && styles.fullScreen}`} onClick={this.containerClick.bind(this)}>
+                <ImportFile {...importProps}/>
                 <div className={styles.cooperate}>
                     {
                         !isShowBatchOper && (
@@ -251,7 +260,7 @@ class DataManage extends Component {
                                     <Icon type="plus" />
                                     <span className={styles.cooperateText}>新建</span>
                                 </div>
-                                <div className={styles.cooperateItem}>
+                                <div className={styles.cooperateItem} onClick={()=>{this.operateImportModal(true);}}>
                                     <Icon type="download" />
                                     <span className={styles.cooperateText}>导入</span>
                                 </div>
@@ -316,7 +325,8 @@ class DataManage extends Component {
                         </div>
                     </div>
                 </div>
-                <div className={styles.contentTable} ref={this.getTableContainer}>
+                <TableCom columns={columns} tableData={tableData} removeHeight={"96px"} rowSelection={this.rowSelection.bind(this)}/>
+                {/* <div className={styles.contentTable} ref={this.getTableContainer}>
                     <Table style={{ width: "100%", height: "100%" }} 
                         columns={columns}
                         dataSource={tableData}
@@ -343,7 +353,7 @@ class DataManage extends Component {
                         // 选择操作
                         rowSelection={this.rowSelection.call(this)}
                     />
-                </div>
+                </div> */}
                 <div className={styles.footer}>
                     <div className={styles.footerItem}>
                         <Select
