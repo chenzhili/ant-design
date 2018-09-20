@@ -186,6 +186,7 @@ export default {
         fieldNameArr: [], //存储 所有的 字段,isShow来标识是否显示此字段,isFilter 标识当前字段是否 用于 条件筛选 [{name:"name",isShow:true,type:"string",dataIndex:"gender(这个应该是 对于 字段的唯一标识符)",isFilter:true,id:"1232-232dsfs-323"}]
         filterConditionArr: [],//存储 筛选条件的所有数据 {name:"name",isShow:true,type:"string",dataIndex:"gender(这个应该是 对于 字段的唯一标识符)",isFilter:true,id:"1232-232dsfs-323",value:"",condition:"",extendedType:0}//condition用于获取 对比关系,extendedType针对 日期类型 的扩展字段
         // 导入逻辑
+        isFixedFilter:false,
         importSteps: 1, //导入步骤
     },
     subscriptions: {
@@ -238,6 +239,11 @@ export default {
             return { ...state, importSteps: steps }
         },
         // 对于筛选条件的逻辑
+        isFixedFilterModal(state,action){
+            let {isFixedFilter} = state,{isFixed} = action.payload;
+            console.log(isFixed);
+            return {...state,isFixedFilter:isFixed === undefined?(!isFixedFilter):isFixed};
+        },
         filterConditionChange(state, action) {
             let { fieldNameArr, filterConditionArr } = state, { id, type } = action.payload;
             if (type == 1) {

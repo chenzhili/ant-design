@@ -10,6 +10,11 @@
     background-clip: padding-box;
     font-size:14px;
     text-align:left;
+    padding-bottom:50px;
+    &.fixedContainer{
+        width:100%;
+        height:100%;
+    }
     &:hover{
         color:rgba(0, 0, 0, 0.65);
     }
@@ -42,6 +47,8 @@
         border-top:1px solid #e9e9e9;
     }
     .filterBtn{
+        position: absolute;
+        bottom:0;
         padding:0 20px;
         display:flex;
         align-items:center;

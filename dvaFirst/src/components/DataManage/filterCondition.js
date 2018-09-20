@@ -88,14 +88,14 @@ class FilterCondition extends Component {
         });
     }
     render() {
-        let {fieldNameArr} = this.props;
+        let {fieldNameArr,isFixedFilter,isFixedFilterModal} = this.props;
         let selectFilterArr = [];
         fieldNameArr.forEach(v=>{
             v["isFilter"] && selectFilterArr.push(v["id"]);
         });
         return (
             <div className={styles.container}>
-                <Icon className={styles.affixed} type="pushpin" theme="outlined" />
+                <Icon className={styles.affixed} type="pushpin" theme="outlined" title={isFixedFilter?"取消固定显示":"固定显示"} onClick={()=>{isFixedFilterModal();}}/>
                 <div className={styles.header}>
                     筛选符合以下<Select defaultValue={"all"} className={styles.headerSelect}>
                         <Option value="all">所有</Option>
