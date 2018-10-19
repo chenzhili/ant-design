@@ -35,7 +35,7 @@ import TestTable from "./table/table"
 
 /* 测试 验证 */
 let data = {
-  username: "aa",
+  username: ["aa",""],
   tel: "17898787887",
   email: "1111@qq.com",
   num: 4

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types'
-import { Row, Col, Layout, Menu, Icon, Form, Input,Tree  } from "antd";
+import { Row, Col, Layout, Menu, Icon, Form, Input, Tree } from "antd";
 import styles from "./Dashboard.less";
 import logo from "./logo.svg"
 import nprogress from "nprogress";
@@ -116,7 +116,25 @@ class A extends React.Component {
     )
   }
 }
-
+function mapTree(key, treeData) {
+  let tempArr = [];
+  treeData.forEach((v, i) => {
+      if (v["key"] === key) {
+          tempArr.push({ key, title: v["title"] });
+      }
+      if (v["key"] !== key && v["children"] && v["children"].length) {
+          tempArr = tempArr.concat(mapTree(key, v["children"]));
+      }
+  });
+  return tempArr;
+}
+function generateParts(selectedKeys, treeData) {
+  let resultArr = [];
+  selectedKeys.forEach((v, i) => {
+      resultArr = resultArr.concat(mapTree(v, treeData));
+  })
+  return resultArr;
+}
 
 /* 树形结构 */
 const x = 3;
@@ -152,6 +170,7 @@ class Dashboard extends React.Component {
   state = {
     gData,
     expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
+    selectedKeys: ['0-0', '0-0-0']
   }
 
   onDragEnter = (info) => {
@@ -222,16 +241,48 @@ class Dashboard extends React.Component {
       }
       return <TreeNode key={item.key} title={item.title} />;
     });
+    let dataArr = generateParts(this.state.selectedKeys,gData);
+    console.log(dataArr);
+    console.log("重新渲染");
     return (
-      <Tree
-        className="draggable-tree"
-        // defaultExpandedKeys={this.state.expandedKeys}
-        draggable
-        onDragEnter={this.onDragEnter}
-        onDrop={this.onDrop}
-      >
-        {loop(this.state.gData)}
-      </Tree>
+      <div>
+        <Tree
+          className="draggable-tree"
+          multiple={true}
+          // defaultExpandedKeys={this.state.expandedKeys}
+          draggable
+          onDragEnter={this.onDragEnter}
+          onSelect={(key, e) => {
+            let tempArr = [];
+            e["selectedNodes"].forEach(v => {
+              tempArr.push(v["key"]);
+            });
+            this.setState({
+              selectedKeys: tempArr
+            });
+          }}
+          onDrop={this.onDrop}
+          selectedKeys={[...this.state.selectedKeys]}
+        >
+          {loop(this.state.gData)}
+        </Tree>
+        {
+          dataArr.map((v,i)=>(
+            <div key={i} onClick={()=>{
+              let {selectedKeys} = this.state;
+              for(let i=0;i<selectedKeys.length;i++){
+                let item = selectedKeys[i];
+                if(item === v["key"]){
+                  selectedKeys.splice(i,1);
+                  break;
+                }
+              }
+              console.log(selectedKeys);
+              this.setState({selectedKeys});
+            }}>{v["title"]}</div>
+          ))
+        }
+      </div>
     );
   }
 }
