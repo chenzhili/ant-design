@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types'
-import { Row, Col, Layout, Menu, Icon, Form, Input, Tree } from "antd";
+import { Row, Col, Layout, Menu, Icon, Form, Input, Tree, Table, Divider, Tag,Button } from "antd";
 import styles from "./Dashboard.less";
 import logo from "./logo.svg"
 import nprogress from "nprogress";
+import {Guid} from "../../utils/com"
 
 import ChildSchool from "../../components/immutable/ChildSchool";
 import ChildHome from "../../components/immutable/ChildHome";
@@ -14,6 +15,8 @@ import update from 'immutability-helper';
 const { Header, Sider, Content, Footer } = Layout;
 const FormItem = Form.Item;
 const TreeNode = Tree.TreeNode;
+const { Column, ColumnGroup } = Table;
+
 class A extends React.Component {
   constructor(props) {
     super(props);
@@ -119,19 +122,19 @@ class A extends React.Component {
 function mapTree(key, treeData) {
   let tempArr = [];
   treeData.forEach((v, i) => {
-      if (v["key"] === key) {
-          tempArr.push({ key, title: v["title"] });
-      }
-      if (v["key"] !== key && v["children"] && v["children"].length) {
-          tempArr = tempArr.concat(mapTree(key, v["children"]));
-      }
+    if (v["key"] === key) {
+      tempArr.push({ key, title: v["title"] });
+    }
+    if (v["key"] !== key && v["children"] && v["children"].length) {
+      tempArr = tempArr.concat(mapTree(key, v["children"]));
+    }
   });
   return tempArr;
 }
 function generateParts(selectedKeys, treeData) {
   let resultArr = [];
   selectedKeys.forEach((v, i) => {
-      resultArr = resultArr.concat(mapTree(v, treeData));
+    resultArr = resultArr.concat(mapTree(v, treeData));
   })
   return resultArr;
 }
@@ -166,7 +169,7 @@ const generateData = (_level, _preKey, _tns) => {
 generateData(z);
 
 console.log(gData);
-class Dashboard extends React.Component {
+class DashboardTest extends React.Component {
   state = {
     gData,
     expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
@@ -241,7 +244,7 @@ class Dashboard extends React.Component {
       }
       return <TreeNode key={item.key} title={item.title} />;
     });
-    let dataArr = generateParts(this.state.selectedKeys,gData);
+    let dataArr = generateParts(this.state.selectedKeys, gData);
     console.log(dataArr);
     console.log("重新渲染");
     return (
@@ -267,18 +270,18 @@ class Dashboard extends React.Component {
           {loop(this.state.gData)}
         </Tree>
         {
-          dataArr.map((v,i)=>(
-            <div key={i} onClick={()=>{
-              let {selectedKeys} = this.state;
-              for(let i=0;i<selectedKeys.length;i++){
+          dataArr.map((v, i) => (
+            <div key={i} onClick={() => {
+              let { selectedKeys } = this.state;
+              for (let i = 0; i < selectedKeys.length; i++) {
                 let item = selectedKeys[i];
-                if(item === v["key"]){
-                  selectedKeys.splice(i,1);
+                if (item === v["key"]) {
+                  selectedKeys.splice(i, 1);
                   break;
                 }
               }
               console.log(selectedKeys);
-              this.setState({selectedKeys});
+              this.setState({ selectedKeys });
             }}>{v["title"]}</div>
           ))
         }
@@ -288,6 +291,294 @@ class Dashboard extends React.Component {
 }
 
 
+
+
+
+// 生成 对应的 表头 
+function generateColumn(columnsNotLast,ParentCom){
+  if(!columnsNotLast || !columnsNotLast.length)return;
+  let comp = function({valueObj,Com}){
+    return function(){
+      return <Com {...valueObj}></Com>
+    }
+  }
+  let nestCom = function({CurrentCom,ParentCom}){
+    if(ParentCom){
+      return function(){
+        return (
+          <ParentCom>
+          <CurrentCom></CurrentCom>
+        </ParentCom>
+        )
+      }
+    }
+    return function(){
+      (<CurrentCom></CurrentCom>)
+    }
+  }
+  let express;
+  // columnsNotLast.forEach((v,i)=>{
+    let v = columnsNotLast[0];
+    if(!v["notRender"]){
+      let tempObj = {title:v["title"],id:v["id"]};
+      express = nestCom({CurrentCom:comp({valueObj:tempObj,Com:D}),ParentCom});
+      console.log(express);
+      if(v["children"] && v["children"].length){
+        generateColumn(v["children"],express);
+      }
+    }
+  // });
+  return express;
+}
+function D(props){
+  return(
+    <div>
+      {props.children}
+    </div>
+  )
+}
+function F(){
+  return (
+    <p>aaaa</p>
+  )
+}
+let comp = function({valueObj,Com}){
+  return <Com/>
+}
+let nestCom = function({CurrentCom,ParentCom}){
+  if(ParentCom){
+      return (
+        <ParentCom>
+        <CurrentCom></CurrentCom>
+      </ParentCom>
+      )
+    }
+  return (<CurrentCom></CurrentCom>)
+}
+
+// const All = nestCom({CurrentCom:comp({Com:F}),ParentCom});
+// console.log("all",All);
+
+const data = [{
+  key: '1',
+  firstName: 'John',
+  lastName: 'Brown',
+  age: 32,
+  test:1,
+  address: 'New York No. 1 Lake Park',
+  tags: ['nice', 'developer'],
+}, {
+  key: '2',
+  firstName: 'Jim',
+  lastName: 'Green',
+  test:1,
+  age: 42,
+  address: 'London No. 1 Lake Park',
+  tags: ['loser'],
+}, {
+  key: '3',
+  firstName: 'Joe',
+  test:1,
+  lastName: 'Black',
+  age: 32,
+  address: 'Sidney No. 1 Lake Park',
+  tags: ['cool', 'teacher'],
+}];
+
+let comId = [Guid(),Guid(),Guid(),Guid(),Guid(),Guid()];
+var columnsChildren = [
+  {
+    name:"字段1",
+    dataIndex:comId[0],
+    key:comId[0]
+  },
+  {
+    name:"字段2",
+    dataIndex:comId[1],
+    key:comId[1]
+  },
+  {
+    name:"字段3",
+    dataIndex:comId[2],
+    key:comId[2]
+  },
+  {
+    name:"字段4",
+    dataIndex:comId[3],
+    key:comId[3]
+  },
+  {
+    name:"字段5",
+    dataIndex:comId[4],
+    key:comId[4]
+  },
+  {
+    name:"字段6",
+    dataIndex:comId[5],
+    key:comId[5]
+  },
+];
+const  columnsNotLast = [ //保存 除了 最后的层 的 表头 数据
+  {
+      title:"a1",
+      id:Guid(),
+      children:[
+          {title:"a11",id:Guid(),children:[
+            {id:comId[0]},{id:comId[5]}
+          ]},
+          {title:"a12",id:Guid(),children:[
+            {id:comId[1]}
+          ]},
+      ]
+  },
+  {
+      title:"",
+      id:Guid(),
+      notRender:true,
+      children:[
+        {id:comId[2]}
+      ]
+  },
+  {
+    title:"c1",
+    id:Guid(),
+    children:[
+      {title:"c11",id:Guid(),children:[
+        {
+          title:"c111",id:Guid(),children:[
+            {id:comId[3]}
+          ]
+        }
+      ]},
+      {
+        title:"c21",id:Guid(),children:[
+          {id:comId[4]}
+        ]
+      }
+    ]
+  }
+];
+// 处理 成整个 表头的 方法
+function dealColumns(columnsNotLast,columnsChildren){
+  if(!columnsNotLast || !columnsNotLast.length)return;
+  columnsNotLast.forEach(v=>{
+    if(!v["children"] || !v["children"].length){
+      for(let i=0,l=columnsChildren.length;i<l;i++){
+        let item = columnsChildren[i];
+        if(item["key"] === v["id"]){
+          v = {...v,...item};
+          break;
+        }
+      }
+    }else{
+      dealColumns(v["children"],columnsChildren)
+    }
+  });
+  console.log(columnsNotLast);
+}
+dealColumns(columnsNotLast,columnsChildren);
+// console.log(columnsNotLast);
+class Dashboard extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    let aa = function(columnsNotLast){
+      return columnsNotLast.map(v=>{
+        if(!v["notRender"]){
+          let Com = !v["isLast"]?ColumnGroup:Column;
+          // let propsObj = !v["isLast"]?{title:v["title"],id:v["id"]}:{...v}
+          return (<Com key={v["id"]} {...v}>
+          {
+            (()=>{
+              if(v["children"] && v["children"].length){
+                return aa(v["children"])
+              }
+            })()
+          }
+        </Com>)
+        }
+      });
+    }
+    console.log(aa(columnsNotLast));
+    /* let test = columnsNotLast.map(v=>{
+      return (
+        <ColumnGroup key={v["id"]} title={v["title"]}>
+          {
+            (()=>{
+              if(v["children"] && v["children"].length){
+                return v["children"].map(item=>(
+                  <ColumnGroup key={v["id"]} title={item["title"]}></ColumnGroup>
+                ))
+              }
+            })()
+          }
+        </ColumnGroup>
+      );
+    });
+    console.log(test); */
+    return (
+        <div>
+          
+        </div>
+      // {/* <Table dataSource={data} bordered={true}>
+      //   <ColumnGroup title="test">
+      //     <Column
+      //       title="test"
+      //       dataIndex="test"
+      //       key="test"
+      //     />
+      //     <ColumnGroup title="Name">
+      //       <Column
+      //         title="First Name"
+      //         dataIndex="firstName"
+      //         key="firstName"
+      //       />
+
+      //     </ColumnGroup>
+      //     <ColumnGroup title="哦哦">
+      //       <Column
+      //         title="Last Name"
+      //         dataIndex="lastName"
+      //         key="lastName"
+      //       />
+      //     </ColumnGroup>
+      //   </ColumnGroup>
+      //   <Column
+      //     title="Age"
+      //     dataIndex="age"
+      //     key="age"
+      //   />
+      //   <Column
+      //     title="Address"
+      //     dataIndex="address"
+      //     key="address"
+      //   />
+      //   <Column
+      //     title="Tags"
+      //     dataIndex="tags"
+      //     key="tags"
+      //     render={tags => (
+      //       <span>
+      //         {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
+      //       </span>
+      //     )}
+      //   />
+      //   <Column
+      //     title="Action"
+      //     key="action"
+      //     render={(text, record) => (
+      //       <span>
+      //         <a href="javascript:;">Invite {record.lastName}</a>
+      //         <Divider type="vertical" />
+      //         <a href="javascript:;">Delete</a>
+      //       </span>
+      //     )}
+      //   />
+      // </Table> */}
+    );
+  }
+}
 
 function T(props) {
   return (

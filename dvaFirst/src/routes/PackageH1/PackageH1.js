@@ -574,6 +574,11 @@ class H1Test extends React.Component {
               activeId:record["mainId"]
             });
           },  // 鼠标移入行
+          onMouseMove:()=>{
+            this.setState({
+              activeId:record["mainId"]
+            });
+          },
           onMouseOut:()=>{
             this.setState({
               activeId:""

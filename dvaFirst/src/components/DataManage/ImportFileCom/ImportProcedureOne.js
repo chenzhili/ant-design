@@ -16,13 +16,13 @@ function ImportProcedureOne(props) {
             <div className={styles.mainContent}>
                 <div className={styles.contentOperate}>
                     <Upload accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" showUploadList={false}
-                    action={`${config.serverIp}/Files/ImportExcel`}
-                    onChange={(e) => {
-                        console.log(e);
-                        if (e["file"]["status"] === "error") {
+                    action={"http://127.0.0.1:5004/api/Files/ImportExcel"}
+                    onChange={(e) => { 
+                        // console.log(e);
+                        if (e["file"]["status"] === "done") {
                             const typeReg = /^(\.csv|application\/vnd.openxmlformats-officedocument.spreadsheetml\.sheet|application\/vnd\.ms-excel)$/ig;
                             if (typeReg.test(e["file"]["type"])) {
-                                changeSteps(importSteps + 1);
+                                
                             } else {
                                 message.config({ maxCount: 1 });
                                 message.warning("不支持选择的文件类型");
