@@ -1,16 +1,22 @@
 import React from 'react';
 import { connect } from 'dva';
 import PropTypes from 'prop-types'
-import { Row, Col, Layout, Menu, Icon, Form, Input, Tree, Table, Divider, Tag,Button } from "antd";
+import { Row, Col, Layout, Menu, Icon, Form, Input, Tree, Table, Divider, Tag, Button } from "antd";
 import styles from "./Dashboard.less";
 import logo from "./logo.svg"
 import nprogress from "nprogress";
-import {Guid} from "../../utils/com"
+import { Guid } from "../../utils/com"
 
 import ChildSchool from "../../components/immutable/ChildSchool";
 import ChildHome from "../../components/immutable/ChildHome";
 import InnerChildSchool from "../../components/immutable/InnerChildSchool";
 import update from 'immutability-helper';
+
+// 用 dnd 进行 子表单的 拖动
+import { DragDropContextProvider, DragSource, DropTarget, DragDropContext } from 'react-dnd'
+import ReactCalendar from 'rc-calendar';
+
+const type = "subdnd";
 
 const { Header, Sider, Content, Footer } = Layout;
 const FormItem = Form.Item;
@@ -290,72 +296,6 @@ class DashboardTest extends React.Component {
   }
 }
 
-
-
-
-
-// 生成 对应的 表头 
-function generateColumn(columnsNotLast,ParentCom){
-  if(!columnsNotLast || !columnsNotLast.length)return;
-  let comp = function({valueObj,Com}){
-    return function(){
-      return <Com {...valueObj}></Com>
-    }
-  }
-  let nestCom = function({CurrentCom,ParentCom}){
-    if(ParentCom){
-      return function(){
-        return (
-          <ParentCom>
-          <CurrentCom></CurrentCom>
-        </ParentCom>
-        )
-      }
-    }
-    return function(){
-      (<CurrentCom></CurrentCom>)
-    }
-  }
-  let express;
-  // columnsNotLast.forEach((v,i)=>{
-    let v = columnsNotLast[0];
-    if(!v["notRender"]){
-      let tempObj = {title:v["title"],id:v["id"]};
-      express = nestCom({CurrentCom:comp({valueObj:tempObj,Com:D}),ParentCom});
-      console.log(express);
-      if(v["children"] && v["children"].length){
-        generateColumn(v["children"],express);
-      }
-    }
-  // });
-  return express;
-}
-function D(props){
-  return(
-    <div>
-      {props.children}
-    </div>
-  )
-}
-function F(){
-  return (
-    <p>aaaa</p>
-  )
-}
-let comp = function({valueObj,Com}){
-  return <Com/>
-}
-let nestCom = function({CurrentCom,ParentCom}){
-  if(ParentCom){
-      return (
-        <ParentCom>
-        <CurrentCom></CurrentCom>
-      </ParentCom>
-      )
-    }
-  return (<CurrentCom></CurrentCom>)
-}
-
 // const All = nestCom({CurrentCom:comp({Com:F}),ParentCom});
 // console.log("all",All);
 
@@ -364,221 +304,233 @@ const data = [{
   firstName: 'John',
   lastName: 'Brown',
   age: 32,
-  test:1,
+  test: 1,
   address: 'New York No. 1 Lake Park',
   tags: ['nice', 'developer'],
 }, {
   key: '2',
   firstName: 'Jim',
   lastName: 'Green',
-  test:1,
+  test: 1,
   age: 42,
   address: 'London No. 1 Lake Park',
   tags: ['loser'],
 }, {
   key: '3',
   firstName: 'Joe',
-  test:1,
+  test: 1,
   lastName: 'Black',
   age: 32,
   address: 'Sidney No. 1 Lake Park',
   tags: ['cool', 'teacher'],
 }];
 
-let comId = [Guid(),Guid(),Guid(),Guid(),Guid(),Guid()];
+// 将 表头 定义为 拖动的 HOC
+/* 对于 expect 数据 项的 表头 */
+@DragSource(type, {
+  beginDrag(props, monitor, component) {
+    return {
+      
+    }
+  },
+  endDrag(props, monitor, component) {
+    
+  }
+}, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  currentItem: monitor.getItem(),
+  isDragging: monitor.isDragging()
+}))
+@DropTarget(type, {
+  hover(props, monitor, component) {
+    
+  }
+}, (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget()
+}))
+class NotLastHead extends React.Component {
+  constructor(props) {
+    super(props);
+
+  }
+  render() {
+    console.log("jinliamei");
+    debugger
+    let { connectDragSource, connectDropTarget,...other } = this.props;
+    console.log("other",other);
+    console.log("this.props",this.props);
+    return connectDropTarget(connectDragSource(
+      <ColumnGroup {...this.props}>
+        {
+          this.props.children
+        }
+      </ColumnGroup>
+    ));
+  }
+}
+
+
+let comId = [Guid(), Guid(), Guid(), Guid(), Guid(), Guid()];
+const dataSource = [
+  {
+    key: 0,
+    [comId[0]]: 1,
+    [comId[1]]: 1,
+    [comId[2]]: 1,
+    [comId[3]]: 1,
+    [comId[4]]: 1,
+    [comId[5]]: 1,
+  }
+]
 var columnsChildren = [
   {
-    name:"字段1",
-    dataIndex:comId[0],
-    key:comId[0]
+    name:<A/>,
+    dataIndex: comId[0],
+    key: comId[0]
   },
   {
-    name:"字段2",
-    dataIndex:comId[1],
-    key:comId[1]
+    name: "字段2",
+    dataIndex: comId[1],
+    key: comId[1]
   },
   {
-    name:"字段3",
-    dataIndex:comId[2],
-    key:comId[2]
+    name: "字段3",
+    dataIndex: comId[2],
+    key: comId[2]
   },
   {
-    name:"字段4",
-    dataIndex:comId[3],
-    key:comId[3]
+    name: "字段4",
+    dataIndex: comId[3],
+    key: comId[3]
   },
   {
-    name:"字段5",
-    dataIndex:comId[4],
-    key:comId[4]
+    name: "字段5",
+    dataIndex: comId[4],
+    key: comId[4]
   },
   {
-    name:"字段6",
-    dataIndex:comId[5],
-    key:comId[5]
+    name: "字段6",
+    dataIndex: comId[5],
+    key: comId[5]
   },
 ];
-const  columnsNotLast = [ //保存 除了 最后的层 的 表头 数据
+const columnsNotLast = [ //保存 除了 最后的层 的 表头 数据
   {
-      title:"a1",
-      id:Guid(),
-      children:[
-          {title:"a11",id:Guid(),children:[
-            {id:comId[0]},{id:comId[5]}
-          ]},
-          {title:"a12",id:Guid(),children:[
-            {id:comId[1]}
-          ]},
-      ]
-  },
-  {
-      title:"",
-      id:Guid(),
-      notRender:true,
-      children:[
-        {id:comId[2]}
-      ]
-  },
-  {
-    title:"c1",
-    id:Guid(),
-    children:[
-      {title:"c11",id:Guid(),children:[
-        {
-          title:"c111",id:Guid(),children:[
-            {id:comId[3]}
-          ]
-        }
-      ]},
+    title: "a1",
+    id: Guid(),
+    children: [
       {
-        title:"c21",id:Guid(),children:[
-          {id:comId[4]}
+        title: "a11", id: Guid(), children: [
+          { id: comId[0] }, { id: comId[5] }
+        ]
+      },
+      {
+        title: "a12", id: Guid(), children: [
+          { id: comId[1] }
+        ]
+      },
+    ]
+  },
+  {
+    title: "",
+    id: Guid(),
+    notRender: true,
+    children: [
+      { id: comId[2] }
+    ]
+  },
+  {
+    title: "c1",
+    id: Guid(),
+    children: [
+      {
+        title: "c11", id: Guid(), children: [
+          {
+            title: "c111", id: Guid(), children: [
+              { id: comId[3] }
+            ]
+          }
+        ]
+      },
+      {
+        title: "c21", id: Guid(), children: [
+          { id: comId[4] }
         ]
       }
     ]
   }
 ];
 // 处理 成整个 表头的 方法
-function dealColumns(columnsNotLast,columnsChildren){
-  if(!columnsNotLast || !columnsNotLast.length)return;
-  columnsNotLast.forEach(v=>{
-    if(!v["children"] || !v["children"].length){
-      for(let i=0,l=columnsChildren.length;i<l;i++){
-        let item = columnsChildren[i];
-        if(item["key"] === v["id"]){
-          v = {...v,...item};
-          break;
+function dealColumns(columnsNotLast, columnsChildren) {
+  if (!columnsNotLast || !columnsNotLast.length) return;
+  columnsNotLast.forEach(v => {
+    if (v["notRender"]) {
+      let itemObj = {};
+      columnsChildren.forEach(item => {
+        if (item["key"] === v["children"][0]["id"]) {
+          itemObj = { ...item };
         }
+      });
+      console.log(itemObj);
+      v["isLast"] = true;
+      v["children"] = null;
+      v["notRender"] = false;
+      v["id"] = itemObj["key"];
+      v["dataIndex"] = itemObj["dataIndex"];
+      v["title"] = itemObj["name"];
+    } else {
+      if (v["children"] && v["children"].length) {
+        dealColumns(v["children"], columnsChildren)
+      } else {
+        columnsChildren.forEach(item => {
+          if (item["key"] === v["id"]) {
+            Object.keys(item).forEach(key => {
+              v[key] = item[key];
+            });
+          }
+        });
+        v["isLast"] = true;
+        v["title"] = v["name"];
       }
-    }else{
-      dealColumns(v["children"],columnsChildren)
     }
   });
-  console.log(columnsNotLast);
+  return columnsNotLast;
 }
-dealColumns(columnsNotLast,columnsChildren);
-// console.log(columnsNotLast);
+const columns = dealColumns(columnsNotLast, columnsChildren);
+console.log(columns);
+
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
-    let aa = function(columnsNotLast){
-      return columnsNotLast.map(v=>{
-        if(!v["notRender"]){
-          let Com = !v["isLast"]?ColumnGroup:Column;
-          // let propsObj = !v["isLast"]?{title:v["title"],id:v["id"]}:{...v}
-          return (<Com key={v["id"]} {...v}>
-          {
-            (()=>{
-              if(v["children"] && v["children"].length){
-                return aa(v["children"])
-              }
-            })()
-          }
-        </Com>)
-        }
-      });
+    // 重写
+    let generateCom = function (columns) {
+      return columns.map(item => {
+        let Com = !item["isLast"] ? ColumnGroup : Column;
+        let props = !item["isLast"] ? { title: item["title"], id: item["id"] } : { title: item["name"], dataIndex: item["dataIndex"] }
+        return (
+          <Com key={item["id"]} title={item["title"] ? item["title"] : item["name"]} dataIndex={item["dataIndex"]}>
+            {
+              item["children"] && item["children"].length && generateCom(item["children"])
+            }
+          </Com>
+        )
+      })
     }
-    console.log(aa(columnsNotLast));
-    /* let test = columnsNotLast.map(v=>{
-      return (
-        <ColumnGroup key={v["id"]} title={v["title"]}>
-          {
-            (()=>{
-              if(v["children"] && v["children"].length){
-                return v["children"].map(item=>(
-                  <ColumnGroup key={v["id"]} title={item["title"]}></ColumnGroup>
-                ))
-              }
-            })()
-          }
-        </ColumnGroup>
-      );
-    });
-    console.log(test); */
+    console.log(generateCom(columns));
     return (
-        <div>
-          
-        </div>
-      // {/* <Table dataSource={data} bordered={true}>
-      //   <ColumnGroup title="test">
-      //     <Column
-      //       title="test"
-      //       dataIndex="test"
-      //       key="test"
-      //     />
-      //     <ColumnGroup title="Name">
-      //       <Column
-      //         title="First Name"
-      //         dataIndex="firstName"
-      //         key="firstName"
-      //       />
-
-      //     </ColumnGroup>
-      //     <ColumnGroup title="哦哦">
-      //       <Column
-      //         title="Last Name"
-      //         dataIndex="lastName"
-      //         key="lastName"
-      //       />
-      //     </ColumnGroup>
-      //   </ColumnGroup>
-      //   <Column
-      //     title="Age"
-      //     dataIndex="age"
-      //     key="age"
-      //   />
-      //   <Column
-      //     title="Address"
-      //     dataIndex="address"
-      //     key="address"
-      //   />
-      //   <Column
-      //     title="Tags"
-      //     dataIndex="tags"
-      //     key="tags"
-      //     render={tags => (
-      //       <span>
-      //         {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
-      //       </span>
-      //     )}
-      //   />
-      //   <Column
-      //     title="Action"
-      //     key="action"
-      //     render={(text, record) => (
-      //       <span>
-      //         <a href="javascript:;">Invite {record.lastName}</a>
-      //         <Divider type="vertical" />
-      //         <a href="javascript:;">Delete</a>
-      //       </span>
-      //     )}
-      //   />
-      // </Table> */}
+      <div>
+        <Table dataSource={dataSource} bordered={true} columns={columns}>
+          {/* {
+            generateCom(columns)
+          } */}
+        </Table>
+      </div>
     );
   }
 }
+// 表头拖拽用 Table 的 Component 的 header 配置进行拖拽
 
 function T(props) {
   return (
