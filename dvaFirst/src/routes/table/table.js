@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Table, Switch, Input, Button, Popconfirm, Form, Select } from "antd";
 import styles from "./table.less";
-import GC from "@grapecity/spread-sheets" 
+import GC from "@grapecity/spread-sheets"
 console.log(GC);
 // GC.Spread.Sheets.LicenseKey = "123213213";
 
@@ -334,7 +334,7 @@ class TestTableCustom extends Component {
     }
 }
 
-class TestTable extends Component {
+class AAA extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -372,7 +372,7 @@ class TestTable extends Component {
         sheet.getRange(1, 1, 5, 2).hAlign(GC.Spread.Sheets.HorizontalAlign.center);
         sheet.options.rowHeaderVisible = false;
         sheet.options.colHeaderVisible = false;
-        
+
         this.state.spread.invalidateLayout();
         this.state.spread.repaint();
     }
@@ -383,5 +383,37 @@ class TestTable extends Component {
     }
 }
 
-
+class TestTable extends Component {
+    render() {
+        const columns = [
+            {
+              title: 'Full Name', width: 100, dataIndex: 'name', key: 'name', fixed: 'left',
+            },
+            {
+              title: 'Age', width: 100, dataIndex: 'age', key: 'age', fixed: 'left',
+            },
+            { title: 'Column 1', dataIndex: 'address', key: '1',width:1000 },
+            { title: 'Column 2', dataIndex: 'aaa', key: '1' ,width:100},
+            {
+              title: 'Action',
+              key: 'operation',
+              fixed: 'right',
+              width: 100,
+              render: () => <a href="javascript:;">action</a>,
+            },
+          ];
+          
+          const data = [{
+            key: '1',
+            name: 'John Brown',
+            age: 32,
+            aaa:1123,
+            // address: 'New York Park',
+          }];
+        console.log(columns);
+        return (
+            <Table columns={columns} dataSource={[]} scroll={{x: 1300} } />
+        );
+    }
+}
 export default TestTable;
