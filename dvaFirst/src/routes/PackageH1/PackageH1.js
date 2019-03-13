@@ -438,7 +438,7 @@ let newTableData = (tableData)=>{
 
 
 const dealData = newTableData(realData);
-
+console.log(dealData);
 
 // 测试怎么合并 数据
 let testColumn = [{

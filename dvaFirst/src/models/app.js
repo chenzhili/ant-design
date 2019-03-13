@@ -38,6 +38,9 @@ export default {
                 case "9":
                 yield put(routerRedux.replace("DataManage"));
                 break;
+                case "10":
+                yield put(routerRedux.replace("ResizeTable"));
+                break;
                 default:
                 yield put(routerRedux.replace("h1"));
                 

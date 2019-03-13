@@ -29,13 +29,15 @@ import Validator from "async-validator";
 
 // 测试table
 import TestTable from "./table/table"
+//自定义 resizeTable
+import ResizeTable from "./ResizeTable/ResizeTable"
 
 // import DataManage from "./DataManage/DataManage"
 
 
 /* 测试 验证 */
 let data = {
-  username: ["aa",""],
+  username: ["aa", ""],
   tel: "17898787887",
   email: "1111@qq.com",
   num: 4
@@ -177,9 +179,10 @@ class App extends React.Component {
       { type: "DndTest", value: "nav 6" },
       { type: "DndWork", value: "DndWork" },
       { type: "DndAdvance", value: 'DndAdvance' },
-      { type: "DataManage", value: "DataManage" }
+      { type: "DataManage", value: "DataManage" },
+      { type: "ResizeTable", value: "ResizeTable" }
     ];
-    let {DataManage} = this.props;
+    let { DataManage } = this.props;
     return (
       <Layout className={styles.layout}>
         <Sider
@@ -220,7 +223,7 @@ class App extends React.Component {
             </div>
           </Header>
 
-          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280,position:"relative" }}>
+          <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280, position: "relative" }}>
             <Switch>
               <Route path={this.props.match.path} exact render={() => <Redirect to={`${this.props.match.path}/dashboard`} />} />
               <Route path={`${this.props.match.path}/dashboard`} component={Dashboard} />
@@ -233,6 +236,7 @@ class App extends React.Component {
               <Route path={`${this.props.match.path}/DndAdvance`} component={DndAdvance} />
               <Route path={`${this.props.match.path}/DataManage`} component={DataManage} />
               <Route path={`${this.props.match.path}/TestTable`} component={TestTable} />
+              <Route path={`${this.props.match.path}/ResizeTable`} component={ResizeTable}/>
             </Switch>
           </Content>
 
