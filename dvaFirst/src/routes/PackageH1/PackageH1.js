@@ -1,6 +1,6 @@
 import React from 'react';
 // import { connect } from 'dva';
-import { Table } from "antd"
+import { Table,Tag,Divider } from "antd"
 // import PropTypes from 'prop-types'
 
 
@@ -10,6 +10,95 @@ import { Tabs, Button } from 'antd';
 import { Guid } from "../../utils/com"
 import styles from "./PackageH1.less"
 const TabPane = Tabs.TabPane;
+const { Column, ColumnGroup } = Table;
+
+let headerIds = new Array(42).fill(1).map(item => Guid());
+
+/* 格式化 表头 数据 */
+var headerColumns = [
+  [
+    { "Value": "序号", "RowSpan": 3, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "个人承担任务（20%）", "RowSpan": 3, "ColumnSpan": 3, "IsRender": true },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "计划完成时间", "RowSpan": 3, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "实际完成时间", "RowSpan": 3, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "工作量(天)", "RowSpan": 3, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "评分标准", "RowSpan": 3, "ColumnSpan": 1, "IsRender": true },
+
+    { "Value": "上级评估", "RowSpan": 1, "ColumnSpan": 3, "IsRender": true },
+    { "Value": "", "RowSpan": 1, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 1, "ColumnSpan": 3, "IsRender": false },
+
+
+    { "Value": "再上级评估", "RowSpan": 1, "ColumnSpan": 3, "IsRender": true },
+    { "Value": "", "RowSpan": 1, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 1, "ColumnSpan": 3, "IsRender": false }
+  ],
+
+  [
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+
+    { "Value": "得分1", "RowSpan": 1, "ColumnSpan": 2, "IsRender": true },
+    { "Value": "", "RowSpan": 1, "ColumnSpan": 2, "IsRender": false },
+    { "Value": "加权得分", "RowSpan": 2, "ColumnSpan": 1, "IsRender": true },
+
+
+    { "Value": "得分2", "RowSpan": 1, "ColumnSpan": 2, "IsRender": true },
+    { "Value": "", "RowSpan": 1, "ColumnSpan": 2, "IsRender": false },
+    { "Value": "加权得分", "RowSpan": 2, "ColumnSpan": 1, "IsRender": true }
+  ],
+
+  [
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 3, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+    { "Value": "", "RowSpan": 3, "ColumnSpan": 1, "IsRender": false },
+
+    { "Value": "得分", "RowSpan": 1, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "得分1-1", "RowSpan": 1, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "", "RowSpan": 2, "ColumnSpan": 1, "IsRender": false },
+
+
+    { "Value": "得分", "RowSpan": 1, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "得分2-1", "RowSpan": 1, "ColumnSpan": 1, "IsRender": true },
+    { "Value": "", "RowSpan": 2, "ColumnSpan": 1, "IsRender": false }
+  ]
+];
+
+function _headerColumns(columns, n) {//columns为元数据 ,n 为 header 的 行数
+  let headerColumns = columns.splice(0, n);
+  return headerColumns.reduce((prev, next) => {
+    let rowData = next.reduce((p, n, index) => { // index 是 对应的 索引值
+      const { IsRender, ...other } = n;
+      if (IsRender) { p.push({ index, ...other }) };
+      return p;
+    }, []);
+    prev.push(rowData)
+    return prev;
+  }, []);
+}
+function _addHeaderColumnsId(columns, n) {
+  let firstRow = columns[0];
+
+}
+const aaa = _headerColumns(headerColumns, 3);
+console.log(aaa);
+
+
+
+
 
 
 const columns = [{
@@ -35,25 +124,25 @@ const columns = [{
   title: 'E',
   dataIndex: 'address',
 }];
-const guidArr = [Guid(), Guid(), Guid(), Guid(), Guid(), Guid(), Guid(), Guid(),Guid(),]
+const guidArr = [Guid(), Guid(), Guid(), Guid(), Guid(), Guid(), Guid(), Guid(), Guid(),]
 const realColumn = [{
   title: "A",
   dataIndex: guidArr[0],
   width: "100px",
   isMain: true,
-  sorter:true
-},{
-  title:"子表3",
-  children:[
+  sorter: true
+}, {
+  title: "子表3",
+  children: [
     {
-      title:"子表31",
-      dataIndex:guidArr[7],
-      width:"100px"
+      title: "子表31",
+      dataIndex: guidArr[7],
+      width: "100px"
     },
     {
-      title:"子表32",
-      dataIndex:guidArr[8],
-      width:"100px"
+      title: "子表32",
+      dataIndex: guidArr[8],
+      width: "100px"
     }
   ]
 }, {
@@ -327,9 +416,9 @@ let generateColumn = (column) => {
             if (!value) {
               return {
                 children: "",
-                props:{
-                  colSpan:0,
-                  rowSpan:0
+                props: {
+                  colSpan: 0,
+                  rowSpan: 0
                 }
               }
             }
@@ -340,9 +429,9 @@ let generateColumn = (column) => {
                   rowSpan: row["maxRowSpan"]
                 }
               }
-            }else{
+            } else {
               return {
-                children:value["value"]
+                children: value["value"]
               }
             }
           }
@@ -365,7 +454,7 @@ let dealMainAndSubForm = ({ rowData, isMain }) => {
     if (v["isKey"]) {
       tempObj["key"] = v["value"];
     } else {
-      tempObj[v["code"]] = isMain?{ value: v["value"], isMain }:v["value"];
+      tempObj[v["code"]] = isMain ? { value: v["value"], isMain } : v["value"];
     }
   });
   // console.log("tempObj",tempObj);
@@ -414,9 +503,9 @@ function dealTableRowData(rowData) {
     // console.log("dealAllSubForm", dealAllSubForm);
     dealAllSubForm.forEach((v, i) => {
       if (i === 0) {
-        realDealRowArr.push({ ...v, ...mainFormObj, key:`${mainFormObj["key"]}${i}`, maxRowSpan,mainId:mainFormObj["key"] });
+        realDealRowArr.push({ ...v, ...mainFormObj, key: `${mainFormObj["key"]}${i}`, maxRowSpan, mainId: mainFormObj["key"] });
       } else {
-        realDealRowArr.push({ ...v, key:`${mainFormObj["key"]}${i}`, maxRowSpan,mainId:mainFormObj["key"] });
+        realDealRowArr.push({ ...v, key: `${mainFormObj["key"]}${i}`, maxRowSpan, mainId: mainFormObj["key"] });
       }
     });
   } else {
@@ -426,14 +515,11 @@ function dealTableRowData(rowData) {
   return realDealRowArr;
 }
 // 循环处理 table的 数据
-let newTableData = (tableData)=>{
-  if(!tableData["data"] || !tableData["data"].length)return [];
-  let resultDataArr = [];
-  tableData["data"].forEach(v=>{
-    // resultDataArr = [...resultDataArr,...arr];
-    resultDataArr = resultDataArr.concat(dealTableRowData(v));
-  });
-  return resultDataArr;
+let newTableData = (tableData) => {
+  if (!tableData["data"] || !tableData["data"].length) return [];
+  return tableData["data"].reduce((prev, next) => {
+    return prev.concat(dealTableRowData(next));
+  }, []);
 }
 
 
@@ -545,53 +631,162 @@ const testData = [
   },
 ];
 const dealColumn = generateColumn(realColumn);
-console.log("dealColumn",dealColumn);
+console.log("dealColumn", dealColumn);
 class H1Test extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      activeId:""
+      activeId: ""
     }
   }
   render() {
-    let {activeId} = this.state;
+    let { activeId } = this.state;
     return (
       <Table columns={dealColumn} dataSource={dealData} bordered
-      rowClassName={(record)=>{
-        // console.log(record);
-        if(record["mainId"] === activeId){
-          return styles.test
-        }
-      }}
-      onRow={(record) => {
-        return {
-          onClick: () => {
-            console.log("行数据",record["mainId"]);
-          },       // 点击行
-          onMouseEnter: () => {
-            // console.log(record);
-            this.setState({
-              activeId:record["mainId"]
-            });
-          },  // 鼠标移入行
-          onMouseMove:()=>{
-            this.setState({
-              activeId:record["mainId"]
-            });
-          },
-          onMouseOut:()=>{
-            this.setState({
-              activeId:""
-            });
+        rowClassName={(record) => {
+          // console.log(record);
+          if (record["mainId"] === activeId) {
+            return styles.test
           }
-        };
-      }}
-      onChange = {(pagination, filters, sorter)=>{
-        console.log(sorter);
-      }}
+        }}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              console.log("行数据", record["mainId"]);
+            },       // 点击行
+            onMouseEnter: () => {
+              // console.log(record);
+              this.setState({
+                activeId: record["mainId"]
+              });
+            },  // 鼠标移入行
+            onMouseMove: () => {
+              if(record.mainId !== activeId){
+                console.log(record.mainId,activeId);
+                this.setState({
+                  activeId: record["mainId"]
+                });
+              }
+              
+            },
+            onMouseOut: () => {
+              this.setState({
+                activeId: ""
+              });
+            }
+          }
+        }}
+        onChange={(pagination, filters, sorter) => {
+          console.log(sorter);
+        }}
       />
     );
   }
 }
 
+
+// 测试 自定制 cell，加上  render 的操作
+let h1Data = [{
+  key: '5',
+  firstName: 'John',
+  lastName: 'Brown',
+  age: 32,
+  address: 'New York No. 1 Lake Park',
+  aaaa:332,
+  tags: ['nice', 'developer'],
+}, {
+  key: '2',
+  firstName: 'Jim',
+  lastName: 'Green',
+  age: 42,
+  address: 'London No. 1 Lake Park',
+  tags: ['loser'],
+}, {
+  key: '3',
+  firstName: 'Joe',
+  lastName: 'Black',
+  age: 32,
+  address: 'Sidney No. 1 Lake Park',
+  tags: ['cool', 'teacher'],
+}];
+const h1ColumnData = [
+  { title: 'Age', dataIndex: 'aaaa', key: 'age',colSpan:2, top: true, width: 400,render:(value,row,index)=>{
+    console.log(value);  
+    return {children:value}
+  },onCell:(record)=>{return {record,test:true}} },
+  {title:"test",top:true,dataIndex:"test",key:"test",width:100,render:(value,row,index)=>{
+    console.log(value);  
+    return {children:value}
+  }},
+  { title: 'Name', group: true, top: true },
+  {
+      title: 'First Name', dataIndex: 'firstName', key: 'firstName', parent: 'Name', width: 200
+  },
+  { title: 'Last Name', dataIndex: 'lastName', key: 'lastName', parent: 'Name', width: 400 },
+
+  { title: 'Address', dataIndex: 'address', key: 'address', top: true, width: 400 },
+  {
+      title: 'Tags', dataIndex: 'tags', key: 'tags', top: true, width: 400, render: tags => (
+          <span>
+              {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
+          </span>
+      )
+  },
+  {
+      title: 'Action', dataIndex: 'action', width: 400, key: 'action', top: true, render: (text, record) => (
+          <span>
+              <a href="javascript:;">Invite {record.lastName}</a>
+              <Divider type="vertical" />
+              <a href="javascript:;">Delete</a>
+          </span>
+      )
+  },
+]
+const renderColumns = (title, columns) => {
+  let childrenColumns = columns.filter(a => a.parent === title);
+  return childrenColumns.map((a, i) => {
+      let { group, top, ...other } = a;
+      return group ? <ColumnGroup key={i} width={other.width} title={other.title}>
+          {renderColumns(other.title, columns)}
+      </ColumnGroup> :
+          <Column key={i}  {...other}></Column>
+  })
+}
+const buildColumns = (columns) => {
+  let topColumns = columns.filter(a => a.top);
+  return topColumns.map((a, i) => {
+      let { group, top, ...other } = a;
+      return group ? <ColumnGroup key={i} width={other.width} title={other.title}>
+          {renderColumns(other.title, columns)}
+      </ColumnGroup> :
+          <Column key={i} {...other}></Column>
+  })
+}
+const EditableCell = (props)=>{
+  console.log(props);
+  const {test} = props;
+  return <td>
+    {
+      test?props.children:"test"
+    }
+  </td>
+}
+class H2Test extends React.Component{
+  constructor(props){
+    super(props);
+  }
+  render(){
+    return (
+      <Table dataSource={h1Data} components={{
+        body: {
+            cell: EditableCell
+        }
+    }} scroll={{ x: "120%" }}>
+        {
+            buildColumns(h1ColumnData)
+        }
+    </Table>
+    )
+  }
+}
 export default H1Test;
