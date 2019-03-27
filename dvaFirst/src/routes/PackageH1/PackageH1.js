@@ -789,4 +789,181 @@ class H2Test extends React.Component{
     )
   }
 }
-export default H1Test;
+const testId = Array(13).fill(1).map(i => Guid());
+const tableData = [];
+for (let i = 0; i < 10; i++) {
+    tableData.push({
+        key: i,
+        name: 'John Brown',
+        age: i + 1,
+        street: 'Lake Park',
+        building: 'C',
+        number: 2035,
+        companyAddress: 'Lake Street 42',
+        companyName: 'SoftLake Co',
+        gender: 'M',
+    });
+}
+const newColumns = [{//testId[0]
+  title: 'Name',
+  dataIndex: 'name',
+  key: 'name',
+  width: 100,
+  type: "string",
+  id: testId[0],
+  sorter: true,
+  isData: true,
+  parentId: "",
+  freezeType:"1",
+},
+{ //testId[1]
+  title: 'Other',
+  dataIndex: 'Other',
+  key: 'Other',
+  type: "string",
+  id: testId[1],
+  parentId: ""
+}, {//testId[2]
+  title: 'Age',
+  dataIndex: 'age',
+  key: 'age',
+  width: 200,
+  type: "number",
+  id: testId[2],
+  sorter: true,
+  parentId: testId[1],
+  isData: true
+}, {//testId[3]
+  title: 'Address',
+  dataIndex: 'Address',
+  key: 'Address',
+  type: "",
+  id: testId[3],
+  parentId: testId[1],
+  isData: false
+}, {//testId[4]
+  title: 'Street',
+  dataIndex: 'street',
+  key: 'street',
+  width: 200,
+  type: "location",
+  id: testId[4],
+  parentId: testId[3],
+  isData: true
+}, {//testId[5]
+  title: "Block",
+  isData: false,
+  id: testId[5],
+  parentId: testId[3],
+}, {//testId[6]
+  title: 'Building',
+  dataIndex: 'building',
+  key: 'building',
+  width: 100,
+  type: "string",
+  parentId: testId[5],
+  id: testId[6],
+  isData: true
+}, {//testId[7]
+  title: 'Door No',
+  dataIndex: 'Door No',
+  key: 'Door No',
+  width: 100,
+  type: "string",
+  parentId: testId[5],
+  id: testId[7],
+  isData: true
+}, { //testId[8]
+  title: 'Company',
+  id: testId[8],
+  parentId: ""
+}, {//testId[9]
+  title: 'Company Address',
+  dataIndex: 'companyAddress',
+  key: 'companyAddress',
+  width: 100,
+  type: "string",
+  id: testId[9],
+  parentId: testId[8],
+  isData: true
+}, {//testId[10]
+  title: '附件',
+  dataIndex: 'companyName',
+  key: 'companyName',
+  width: 100,
+  type: "attach",
+  id: testId[10],
+  parentId: testId[8],
+  isData: true
+}, {//testId[11]
+  title: 'Gender',
+  dataIndex: 'gender',
+  key: 'gender',
+  width: 80,
+  type: "select",
+  id: testId[11],
+  parentId: "",
+  isData: true
+}, {//testId[12]
+  title: 'Time',
+  dataIndex: 'time',
+  key: 'Time',
+  width: 480,
+  type: "date",
+  id: testId[12],
+  parentId: "",
+  isData: true
+}];
+// H3Test
+const buildColumnsNew = (columns, id) => {
+  // console.log(columns);
+  let topColumns = columns ? columns.filter(a => a.parentId === id) : [];
+
+  return topColumns.length ? topColumns.map((a, i) => {
+      let { isData, ...other } = a;
+      // console.log(other);
+      return !isData ? <ColumnGroup key={i} {...other}>
+          {buildColumnsNew(columns, a.id)}
+      </ColumnGroup> :
+          <Column key={i} {...other}></Column>
+  }) : []
+}
+const _initFixedColumns = (columns, x) => {
+  let leftFixedItem = [], rightFixedItem = [];
+  let isTop = columns.filter(item => item.parentId === "");
+  let notTop = columns.filter(item => item.parentId !== "");
+  for (let i = 0; i < isTop.length; i++) {
+      let item = isTop[i];
+      switch (item.freezeType) {
+          case "1":
+              item.fixed = x === "100%" ? null : "left";
+              leftFixedItem = leftFixedItem.concat(isTop.splice(i, 1));
+              i--;
+              break;
+          case "2":
+              item.fixed = x === "100%" ? null : "right";
+              rightFixedItem = rightFixedItem.concat(isTop.splice(i, 1));
+              i--;
+              break;
+      }
+  }
+  return [...leftFixedItem, ...isTop, ...notTop, ...rightFixedItem];
+}
+class H3Test extends React.Component{
+  render(){
+    return (
+      <Table dataSource={tableData} scroll={{ x: "120%",y:400 }} bordered={true}
+      onRow={(record)=>{
+        return {
+          onMouseEnter:(event)=>{console.log(event,record);}
+        }
+      }}
+      >
+        {
+            buildColumnsNew(_initFixedColumns(newColumns,"120%"),"")
+        }
+    </Table>
+    )
+  }
+}
+export default H3Test;
