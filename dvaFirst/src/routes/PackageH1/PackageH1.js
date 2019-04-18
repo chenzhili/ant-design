@@ -1,16 +1,17 @@
 import React from 'react';
 // import { connect } from 'dva';
-import { Table,Tag,Divider } from "antd"
+import { Table, Tag, Divider } from "antd"
 // import PropTypes from 'prop-types'
 
 
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
-import { Tabs, Button } from 'antd';
+import { Tabs, Button, Select } from 'antd';
 import { Guid } from "../../utils/com"
 import styles from "./PackageH1.less"
 const TabPane = Tabs.TabPane;
 const { Column, ColumnGroup } = Table;
+const Option = Select.Option;
 
 let headerIds = new Array(42).fill(1).map(item => Guid());
 
@@ -639,47 +640,73 @@ class H1Test extends React.Component {
       activeId: ""
     }
   }
+  handleChange(value) {
+    console.log(`selected ${value}`);
+  }
   render() {
     let { activeId } = this.state;
+    const children = [];
+    for (let i = 10; i < 36; i++) {
+      children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
+    }
     return (
-      <Table columns={dealColumn} dataSource={dealData} bordered
-        rowClassName={(record) => {
-          // console.log(record);
-          if (record["mainId"] === activeId) {
-            return styles.test
-          }
-        }}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              console.log("行数据", record["mainId"]);
-            },       // 点击行
-            onMouseEnter: () => {
-              // console.log(record);
-              this.setState({
-                activeId: record["mainId"]
-              });
-            },  // 鼠标移入行
-            onMouseMove: () => {
-              if(record.mainId !== activeId){
-                console.log(record.mainId,activeId);
+      <div>
+        <Table columns={dealColumn} dataSource={dealData} bordered
+          rowClassName={(record) => {
+            // console.log(record);
+            if (record["mainId"] === activeId) {
+              return styles.test
+            }
+          }}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                console.log("行数据", record["mainId"]);
+              },       // 点击行
+              onMouseEnter: () => {
+                // console.log(record);
                 this.setState({
                   activeId: record["mainId"]
                 });
+              },  // 鼠标移入行
+              onMouseMove: () => {
+                if (record.mainId !== activeId) {
+                  console.log(record.mainId, activeId);
+                  this.setState({
+                    activeId: record["mainId"]
+                  });
+                }
+
+              },
+              onMouseOut: () => {
+                this.setState({
+                  activeId: ""
+                });
               }
-              
-            },
-            onMouseOut: () => {
-              this.setState({
-                activeId: ""
-              });
             }
-          }
-        }}
-        onChange={(pagination, filters, sorter) => {
-          console.log(sorter);
-        }}
-      />
+          }}
+          onChange={(pagination, filters, sorter) => {
+            console.log(sorter);
+          }}
+        />
+        <Select
+          mode={"tags"}
+          style={{ width: '100%' }}
+          onChange={this.handleChange}
+          tokenSeparators={[',']}
+          onSearch={(value)=>{console.log(value);}}
+        >
+          {children}
+        </Select>
+        <Select
+          mode="multiple"
+          style={{ width: '100%' }}
+          onChange={this.handleChange}
+          tokenSeparators={[',']}
+        >
+          {children}
+        </Select>
+      </div>
     );
   }
 }
@@ -692,7 +719,7 @@ let h1Data = [{
   lastName: 'Brown',
   age: 32,
   address: 'New York No. 1 Lake Park',
-  aaaa:332,
+  aaaa: 332,
   tags: ['nice', 'developer'],
 }, {
   key: '2',
@@ -710,99 +737,103 @@ let h1Data = [{
   tags: ['cool', 'teacher'],
 }];
 const h1ColumnData = [
-  { title: 'Age', dataIndex: 'aaaa', key: 'age',colSpan:2, top: true, width: 400,render:(value,row,index)=>{
-    console.log(value);  
-    return {children:value}
-  },onCell:(record)=>{return {record,test:true}} },
-  {title:"test",top:true,dataIndex:"test",key:"test",width:100,render:(value,row,index)=>{
-    console.log(value);  
-    return {children:value}
-  }},
+  {
+    title: 'Age', dataIndex: 'aaaa', key: 'age', colSpan: 2, top: true, width: 400, render: (value, row, index) => {
+      console.log(value);
+      return { children: value }
+    }, onCell: (record) => { return { record, test: true } }
+  },
+  {
+    title: "test", top: true, dataIndex: "test", key: "test", width: 100, render: (value, row, index) => {
+      console.log(value);
+      return { children: value }
+    }
+  },
   { title: 'Name', group: true, top: true },
   {
-      title: 'First Name', dataIndex: 'firstName', key: 'firstName', parent: 'Name', width: 200
+    title: 'First Name', dataIndex: 'firstName', key: 'firstName', parent: 'Name', width: 200
   },
   { title: 'Last Name', dataIndex: 'lastName', key: 'lastName', parent: 'Name', width: 400 },
 
   { title: 'Address', dataIndex: 'address', key: 'address', top: true, width: 400 },
   {
-      title: 'Tags', dataIndex: 'tags', key: 'tags', top: true, width: 400, render: tags => (
-          <span>
-              {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
-          </span>
-      )
+    title: 'Tags', dataIndex: 'tags', key: 'tags', top: true, width: 400, render: tags => (
+      <span>
+        {tags.map(tag => <Tag color="blue" key={tag}>{tag}</Tag>)}
+      </span>
+    )
   },
   {
-      title: 'Action', dataIndex: 'action', width: 400, key: 'action', top: true, render: (text, record) => (
-          <span>
-              <a href="javascript:;">Invite {record.lastName}</a>
-              <Divider type="vertical" />
-              <a href="javascript:;">Delete</a>
-          </span>
-      )
+    title: 'Action', dataIndex: 'action', width: 400, key: 'action', top: true, render: (text, record) => (
+      <span>
+        <a href="javascript:;">Invite {record.lastName}</a>
+        <Divider type="vertical" />
+        <a href="javascript:;">Delete</a>
+      </span>
+    )
   },
 ]
 const renderColumns = (title, columns) => {
   let childrenColumns = columns.filter(a => a.parent === title);
   return childrenColumns.map((a, i) => {
-      let { group, top, ...other } = a;
-      return group ? <ColumnGroup key={i} width={other.width} title={other.title}>
-          {renderColumns(other.title, columns)}
-      </ColumnGroup> :
-          <Column key={i}  {...other}></Column>
+    let { group, top, ...other } = a;
+    return group ? <ColumnGroup key={i} width={other.width} title={other.title}>
+      {renderColumns(other.title, columns)}
+    </ColumnGroup> :
+      <Column key={i}  {...other}></Column>
   })
 }
 const buildColumns = (columns) => {
   let topColumns = columns.filter(a => a.top);
   return topColumns.map((a, i) => {
-      let { group, top, ...other } = a;
-      return group ? <ColumnGroup key={i} width={other.width} title={other.title}>
-          {renderColumns(other.title, columns)}
-      </ColumnGroup> :
-          <Column key={i} {...other}></Column>
+    let { group, top, ...other } = a;
+    return group ? <ColumnGroup key={i} width={other.width} title={other.title}>
+      {renderColumns(other.title, columns)}
+    </ColumnGroup> :
+      <Column key={i} {...other}></Column>
   })
 }
-const EditableCell = (props)=>{
+const EditableCell = (props) => {
   console.log(props);
-  const {test} = props;
+  const { test } = props;
   return <td>
     {
-      test?props.children:"test"
+      test ? props.children : "test"
     }
   </td>
 }
-class H2Test extends React.Component{
-  constructor(props){
+class H2Test extends React.Component {
+  constructor(props) {
     super(props);
   }
-  render(){
+  render() {
     return (
       <Table dataSource={h1Data} components={{
         body: {
-            cell: EditableCell
+          cell: EditableCell
         }
-    }} scroll={{ x: "120%" }}>
+      }} scroll={{ x: "120%" }}>
         {
-            buildColumns(h1ColumnData)
+          buildColumns(h1ColumnData)
         }
-    </Table>
+      </Table>
     )
   }
 }
 const testId = Array(13).fill(1).map(i => Guid());
 const tableData = [];
 for (let i = 0; i < 10; i++) {
-    tableData.push({
-        key: i,
-        name: 'John Brown',
-        age: i + 1,
-        street: 'Lake Park',
-        building: 'C',
-        number: 2035,
-        companyAddress: 'Lake Street 42',
-        companyName: 'SoftLake Co',
-        gender: 'M',
-    });
+  tableData.push({
+    key: i,
+    name: 'John Brown',
+    age: i + 1,
+    street: 'Lake Park',
+    building: 'C',
+    number: 2035,
+    companyAddress: 'Lake Street 42',
+    companyName: 'SoftLake Co',
+    gender: 'M',
+  });
 }
 const newColumns = [{//testId[0]
   title: 'Name',
@@ -814,7 +845,7 @@ const newColumns = [{//testId[0]
   sorter: true,
   isData: true,
   parentId: "",
-  freezeType:"1",
+  freezeType: "1",
 },
 { //testId[1]
   title: 'Other',
@@ -920,12 +951,12 @@ const buildColumnsNew = (columns, id) => {
   let topColumns = columns ? columns.filter(a => a.parentId === id) : [];
 
   return topColumns.length ? topColumns.map((a, i) => {
-      let { isData, ...other } = a;
-      // console.log(other);
-      return !isData ? <ColumnGroup key={i} {...other}>
-          {buildColumnsNew(columns, a.id)}
-      </ColumnGroup> :
-          <Column key={i} {...other}></Column>
+    let { isData, ...other } = a;
+    // console.log(other);
+    return !isData ? <ColumnGroup key={i} {...other}>
+      {buildColumnsNew(columns, a.id)}
+    </ColumnGroup> :
+      <Column key={i} {...other}></Column>
   }) : []
 }
 const _initFixedColumns = (columns, x) => {
@@ -933,36 +964,36 @@ const _initFixedColumns = (columns, x) => {
   let isTop = columns.filter(item => item.parentId === "");
   let notTop = columns.filter(item => item.parentId !== "");
   for (let i = 0; i < isTop.length; i++) {
-      let item = isTop[i];
-      switch (item.freezeType) {
-          case "1":
-              item.fixed = x === "100%" ? null : "left";
-              leftFixedItem = leftFixedItem.concat(isTop.splice(i, 1));
-              i--;
-              break;
-          case "2":
-              item.fixed = x === "100%" ? null : "right";
-              rightFixedItem = rightFixedItem.concat(isTop.splice(i, 1));
-              i--;
-              break;
-      }
+    let item = isTop[i];
+    switch (item.freezeType) {
+      case "1":
+        item.fixed = x === "100%" ? null : "left";
+        leftFixedItem = leftFixedItem.concat(isTop.splice(i, 1));
+        i--;
+        break;
+      case "2":
+        item.fixed = x === "100%" ? null : "right";
+        rightFixedItem = rightFixedItem.concat(isTop.splice(i, 1));
+        i--;
+        break;
+    }
   }
   return [...leftFixedItem, ...isTop, ...notTop, ...rightFixedItem];
 }
-class H3Test extends React.Component{
-  render(){
+class H3Test extends React.Component {
+  render() {
     return (
-      <Table dataSource={tableData} scroll={{ x: "120%",y:400 }} bordered={true}
-      onRow={(record)=>{
-        return {
-          onMouseEnter:(event)=>{console.log(event,record);}
-        }
-      }}
+      <Table dataSource={tableData} scroll={{ x: "120%", y: 400 }} bordered={true}
+        onRow={(record) => {
+          return {
+            onMouseEnter: (event) => { console.log(event, record); }
+          }
+        }}
       >
         {
-            buildColumnsNew(_initFixedColumns(newColumns,"120%"),"")
+          buildColumnsNew(_initFixedColumns(newColumns, "120%"), "")
         }
-    </Table>
+      </Table>
     )
   }
 }
