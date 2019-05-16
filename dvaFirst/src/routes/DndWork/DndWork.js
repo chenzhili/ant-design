@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { DragSource, DropTarget } from 'react-dnd'
-import { Row, Col, Input, Radio, DatePicker, Button, Rate } from "antd"
+import { Row, Col, Input, Radio, DatePicker, Button, Rate,message } from "antd"
 
 const type = "move";
 
@@ -211,6 +211,13 @@ export default class DndWork extends Component {
         if (isExist && !didDrop) {
             DeleteItem(isExist.index);
         }
+    },
+    canDrag(props, monitor){
+        console.log(props);
+        props.item.id === 0 && message.info("流水号只能存在一个");
+        if(props.item.id !== 0){
+            return true
+        }
     }
 }, (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
@@ -246,7 +253,15 @@ class FormSource extends Component {
                 com: item.com
             });
         }
-    }
+    },
+    // 对于 组件 不允许 拖拽，应该在 源头 上 隔离，不是在 目标上进行禁止，不然需要对于每个 拖入的 组件 都要加
+    /* canDrop(props, monitor){
+        console.log(props,);
+        const item = monitor.getItem();
+        if(item.id !== 1){
+            return
+        }
+    } */
 }, (connect, monitor) => ({
     connectDropTarget: connect.dropTarget(),
 }))
