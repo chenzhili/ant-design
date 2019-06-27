@@ -1,107 +1,204 @@
-import { Component } from "react"
-import { CheckBox, Input, Icon, Checkbox, Select,DatePicker,TreeSelect } from "antd"
+import { Component, Fragment } from "react"
+import { CheckBox, Input, Icon, Checkbox, Select, DatePicker, Button } from "antd"
 import { connect } from "dva";
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import styles from "./filterCondition.less"
+import { List, Map, is } from "immutable"
+import { optionObj } from "../../utils/com"
+import { getLocation } from "../../services/DataManage/DataManage"
 
 import GenerateFilterCondition from "./filterHOC"
 const Option = Select.Option;
 
-/* const Data = {
-    showSearch:true,
-    treeData:[{
-        title: 'Node1',
-        value: '0-0',
-        key: '0-0',
-      }, {
-        title: 'Node2',
-        value: '0-1',
-        key: '0-1',
-      }, {
-        title: 'Node2',
-        value: '0-2',
-        key: '0-2',
-      }, {
-        title: 'Node2',
-        value: '0-3',
-        key: '0-3',
-      }, {
-        title: 'Node2',
-        value: '0-4',
-        key: '0-4',
-      }],
-    value: "0-0",
-    // treeCheckable: true,
-    showCheckedStrategy: TreeSelect.SHOW_PARENT,
-    searchPlaceholder: 'Please select',
-}
-function FilterCom() {
-    return (
-        <div className={styles.filterContainer}>
-            <div className={styles.filterHeader}>
-                <div className={styles.inlineBlock+" "+styles.filterHeaderDes}>
-                    <div className={styles.filterTitle+" "+styles.inlineBlock}>出差天数（0.5标识半天）</div>
-                    <Select className={styles.filterCompare} defaultValue={"all"} dropdownMatchSelectWidth={false}>
-                        <Option value="all">不等于任意一个</Option>
-                        <Option value="any">任一</Option>
-                    </Select>
-                </div>
-                <Icon type="delete" theme="outlined" className={styles.filterIcon}/>
-            </div>
-            <div className={styles.filterContent}>
-                <Input className={styles.filterItem}/>
-                <DatePicker className={styles.filterItem} showTime format="YYYY-MM-DD HH:mm:ss"/>
-                <Select className={styles.filterItem+" "+styles.filterItemSelect} defaultValue={1}>
-                    <Option value="1">呵呵</Option>
-                </Select>
-                <TreeSelect className={styles.filterItem+" "+styles.filterItemSelect} {...Data}/>
-                <TreeSelect className={styles.filterItem+" "+styles.filterItemSelect} {...Data} />
-                <Select className={styles.filterItem+" "+styles.filterItemSelect} defaultValue={1} placeholder="省/自治区/直辖市">
-                    <Option value="1">北京</Option>
-                </Select>
-                <div className={styles.filterLocation}>
-                    <Select className={styles.filterLocationItem+" "+styles.filterItemSelect} defaultValue={1} placeholder="市">
-                        <Option value="1">呵呵</Option>
-                    </Select>
-                    <Select className={styles.filterLocationItem+" "+styles.filterItemSelect} defaultValue={1} placeholder="区/县">
-                        <Option value="1">呵呵</Option>
-                    </Select>
-                </div>
-            </div>
-        </div>
-    );
-} */
-
-class FilterCondition extends Component {
-    constructor(props){
-        super(props);
+// 当 fieldNameArr 隐藏了 filterConditionArr 的 项，需要 重新初始化
+const _initFilterConditionArr = (filterConditionArr, fieldNameArr) => {
+    let deleteIndex = filterConditionArr.reduce((prev, next, index) => {
+        let existItem = fieldNameArr.filter(item => item.id === next.id);
+        if (existItem.length && !existItem[0].show) {
+            prev.push(index);
+            return prev;
+        } else {
+            return prev;
+        }
+    }, []);
+    //console.log(deleteIndex);
+    if (!deleteIndex.length) return filterConditionArr;
+    for (let i = 0; i < filterConditionArr.length; i++) {
+        if (deleteIndex.indexOf(i) !== -1) {
+            filterConditionArr.splice(i, 1);
+            i--;
+        }
     }
-    filterFeildChange(type,e){
-        // console.log(type,e);
-        this.props.dispatch({
-            type:"dataManage/filterConditionChange",
-            payload:{
-                id:e,
-                type
+    //console.log(filterConditionArr);
+    return filterConditionArr;
+}
+class FilterCondition extends Component {
+    constructor(props) {
+        super(props);
+        console.log(props);
+        this.state = {
+            fieldNameArr: List(props.fieldNameArr).toJS(),//只有显示 出来的 字段 才能 进行 条件筛选
+            isFixedFilter: props.isFixedFilter,
+            props
+        }
+        //console.log(this.state.fieldNameArr);
+        this.state.filterConditionArr = _initFilterConditionArr(props.filterConditionArr, props.fieldNameArr);
+        const { fieldNameArr } = this.state;
+        this.state.totalType = fieldNameArr.length && fieldNameArr[0]["totalType"] ? this.state.fieldNameArr[0]["totalType"] : 0;
+
+        this.confirmOrFilter = this.confirmOrFilter.bind(this);
+        this.filterRemoveValue = this.filterRemoveValue.bind(this);
+    }
+    static getDerivedStateFromProps(nextProps, prevState) { 
+        if (!is(nextProps, prevState.props)) {
+            return {
+                props: nextProps,
+                fieldNameArr:List(nextProps.fieldNameArr).toJS()
+            }
+        }
+        return null
+    }
+    componentWillUnmount() {
+        //console.log("页面是否销毁，销毁在这里进行 请求，判断 是否需要请求", this.state.filterConditionArr);
+        const { fieldNameArr, filterConditionArr, totalType } = this.state;
+        filterConditionArr.forEach(item => {
+            item.totalType = totalType;
+        });
+        this.props.updateFilterCondition instanceof Function && this.props.updateFilterCondition(fieldNameArr, filterConditionArr);
+    }
+    /* componentWillReceiveProps(nextProps){
+        console.log(nextProps);
+        if(!is(List(nextProps.fieldNameArr),List(this.state.fieldNameArr))){
+            this.state.fieldNameArr = nextProps.fieldNameArr;
+        }
+    } */
+    async getLocationArr(tempObj) {
+        let targetObj = {};
+        if (tempObj.type !== "") {
+            targetObj = { [tempObj.type]: tempObj.value };
+        }
+        let { data } = await getLocation(targetObj);
+        if (data && data instanceof Array) {
+            this._setLocationArr({ data, id: tempObj.id, type: tempObj.type });
+        }
+    }
+    _setLocationArr({ data, id, type }) {
+        // let filterConditionArr = List(this.state.filterConditionArr).toJS();
+        let { filterConditionArr } = this.state;
+        filterConditionArr.forEach(v => {
+            if (v.id === id) {
+                if (type === "") {
+                    v.provArr = data;
+                }
+                if (type === "ProId") {
+                    v.cityArr = data;
+                }
+                if (type === "CityId") {
+                    v.countArr = data;
+                }
             }
         });
+        this.setState({ filterConditionArr });
+    }
+    filterFeildChange(type, id) {
+        // let tempFieldNameArr = List(this.state.fieldNameArr).toJS(),tempFilterConditionArr = List(this.state.filterConditionArr).toJS();
+        let { fieldNameArr: tempFieldNameArr, filterConditionArr: tempFilterConditionArr } = this.state;
+        if (type == 1) {
+            tempFieldNameArr.forEach(v => {
+                if (v.id === id) {
+                    v.isFilter = true;
+                    let tempValue = "";
+                    let tempObj = { ...v, value: tempValue, condition: optionObj[v.type][0]["value"] };
+                    // 日期类型 对 value需要特殊处理，并且加入 provArr,cityArr,countArr 存储 省市区；
+                    if (v.type == "date") {
+                        tempObj.extendedType = "0";
+                        tempValue = moment().format("YYYY-MM-DD HH:mm:ss");
+                    }
+                    if (v.type == "location") {
+                        tempObj.provArr = [];
+                        tempObj.cityArr = [];
+                        tempObj.countArr = [];
+                    }
+                    tempFilterConditionArr.push(tempObj);
+                }
+            });
+        }
+        if (type == 0) {
+            tempFieldNameArr.forEach(v => {
+                if (v.id === id) {
+                    v.isFilter = false;
+                }
+            });
+            for (let i = 0; i < tempFilterConditionArr.length; i++) {
+                let item = tempFilterConditionArr[i];
+                if (item.id === id) {
+                    tempFilterConditionArr.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        this.setState({ fieldNameArr: tempFieldNameArr, filterConditionArr: tempFilterConditionArr });
+    }
+    changeConditionValue(id, keyValue, callBack) {
+        // let filterConditionArr = List(this.state.filterConditionArr).toJS();
+        let { filterConditionArr } = this.state;
+        filterConditionArr = filterConditionArr.map(v => {
+            if (v.id === id) {
+                v = { ...v, ...keyValue }
+            }
+            return v;
+        })
+        this.setState({ filterConditionArr }, () => {
+            callBack instanceof Function && callBack();
+        });
+    }
+    filterRemoveValue() {
+        // let filterConditionArr = List(this.state.filterConditionArr).toJS();
+        let { filterConditionArr } = this.state;
+        filterConditionArr.forEach(v => {
+            v.value = ""
+        });
+        this.setState({ filterConditionArr });
+    }
+    changeExtendedType(e) {
+        this.setState({
+            totalType: e
+        });
+    }
+    confirmOrFilter(e) {
+        const { fieldNameArr, filterConditionArr } = this.state;
+        this.props.containerClick instanceof Function && (this.props.type !== "authority" ? this.props.containerClick(e) : this.props.containerClick(fieldNameArr, filterConditionArr));
     }
     render() {
-        let {fieldNameArr,isFixedFilter,isFixedFilterModal} = this.props;
+        let { isFixedFilterModal, templateId, FormTemplateVersionId, type } = this.props;
+        let { fieldNameArr, isFixedFilter, filterConditionArr, totalType } = this.state;
         let selectFilterArr = [];
-        fieldNameArr.forEach(v=>{
-            v["isFilter"] && selectFilterArr.push(v["id"]);
+        fieldNameArr.forEach(v => {
+            v.isFilter && selectFilterArr.push(v.id);
         });
+        console.log(fieldNameArr);
+        let generateFilterConditionProps = {
+            templateId,
+            FormTemplateVersionId,
+            filterConditionArr,
+            changeConditionValue: this.changeConditionValue.bind(this),
+            filterFeildChange: this.filterFeildChange.bind(this),
+            getLocationArr: this.getLocationArr.bind(this)
+        }
         return (
-            <div className={styles.container}>
-                <Icon className={styles.affixed} type="pushpin" theme="outlined" title={isFixedFilter?"取消固定显示":"固定显示"} onClick={()=>{isFixedFilterModal();}}/>
-                <div className={styles.header}>
-                    筛选符合以下<Select defaultValue={"all"} className={styles.headerSelect}>
-                        <Option value="all">所有</Option>
-                        <Option value="any">任一</Option>
-                    </Select>条件的数据
+            <div className={`${styles.container} ${isFixedFilter ? styles.fixedContainer : ""}`}>
+                {
+                    type === "authority" ? null : <Fragment>
+                        <Icon className={styles.affixed} type="pushpin" theme="outlined" title={isFixedFilter ? "取消固定显示" : "固定显示"} onClick={() => { isFixedFilterModal && isFixedFilterModal(); }} />
+                        <div className={styles.header}>
+                            筛选符合以下<Select value={totalType} className={styles.noBoderSelect} onChange={this.changeExtendedType.bind(this)}>
+                                <Option value={0}>所有</Option>
+                                <Option value={1}>任一</Option>
+                            </Select>条件的数据
                 </div>
+                    </Fragment>
+                }
                 <div>
                     <div className={styles.filterText}><Icon type="plus" theme="outlined" />添加筛选条件</div>
                     <Select
@@ -109,24 +206,32 @@ class FilterCondition extends Component {
                         style={{ width: '100%' }}
                         placeholder="添加筛选条件"
                         className={styles.filterSelect}
-                        defaultValue ={selectFilterArr}
-                        onSelect={this.filterFeildChange.bind(this,1)}
-                        onDeselect = {this.filterFeildChange.bind(this,0)}
+                        value={selectFilterArr}
+                        onSelect={(e, option) => {
+                            this.filterFeildChange(1, e);
+                            fieldNameArr.forEach(v => {
+                                if (v.id == e && v.type == "location") {
+                                    this.getLocationArr({ type: "", value: "", id: e });
+                                }
+                            });
+                        }}
+                        onDeselect={(e) => { this.filterFeildChange(0, e) }}
                     >
-                        {fieldNameArr.map((v,i)=>(
-                            <Option key={i} value={v["id"]}>{v["name"]}</Option>
+                        {fieldNameArr.map((v, i) => (
+                            v.show?<Option key={i} value={v.id}>{v.name}</Option>:null
                         ))}
                     </Select>
                 </div>
-                <div className={styles.filterList}>
-                    <GenerateFilterCondition {...this.props}/>
+                <div className={`${styles.filterList} ${isFixedFilter ? styles.filterListFixed : styles.filterListGeneral}`}>
+                    <GenerateFilterCondition {...generateFilterConditionProps} />
                 </div>
                 <div className={styles.filterBtn}>
-                    <div className={styles.filter}>筛选</div>
-                    <div className={styles.clear}>
-                        <Icon type="tool" theme="outlined" style={{ marginLeft: "4px" }} />
+                    {
+                        <Button className={styles.filter} icon="search" type="primary" onClick={this.confirmOrFilter}>{type !== "authority" ? "筛选" : "确定"}</Button>
+                    }
+                    <Button icon="tool" onClick={this.filterRemoveValue}>
                         清除
-                    </div>
+                    </Button>
                 </div>
             </div>
         );

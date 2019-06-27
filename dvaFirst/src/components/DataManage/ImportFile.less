@@ -1,3 +1,4 @@
+@mainColor:#1990ff;
 .line{
     position:absolute;
     content:"";
@@ -36,27 +37,27 @@
         }
         &.progressActive{
             .desText{
-                color:#0DB3A6;
+                color:@mainColor;
                 font-size:14px;
             }
             .description{
                 width:20px;
                 height:20px;
-                background-color:#0DB3A6;
+                background-color:@mainColor;
                 line-height:20px;
             }
         }
         &.progressRightActive{
             &.progressRight{
                 &::after{
-                    border-color:#0DB3A6;
+                    border-color:@mainColor;
                 }
             }
         }
         &.progressLeftActive{
             &.progressLeft{
                 &::before{
-                    border-color:#0DB3A6;
+                    border-color:@mainColor;
                 }
             }
         }
@@ -92,11 +93,16 @@
             width:80px;
             height:80px;
             border-radius:50%;
-            background-color:#0DB3A6;
             line-height:80px;
             color:#fff;
             margin:30px auto;
             font-size:40px;
+            &.success{
+                background-color:@mainColor;
+            }
+            &.fail{
+                background-color:#EA2000;
+            }
         }
     }
 }
@@ -120,7 +126,7 @@
             background-color:#fff;
         }
         &.next{
-            background-color:#0DB3A6;
+            background-color:@mainColor;
             color:#fff;
         }
     }

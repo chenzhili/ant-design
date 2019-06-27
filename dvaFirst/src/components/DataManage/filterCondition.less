@@ -1,3 +1,4 @@
+@mainColor:#1990ff;
 .container{
     position:absolute;
     z-index:100;
@@ -14,6 +15,8 @@
     &.fixedContainer{
         width:100%;
         height:100%;
+        display:flex;
+        flex-direction:column;
     }
     &:hover{
         color:rgba(0, 0, 0, 0.65);
@@ -21,28 +24,34 @@
     .affixed{
         position: absolute;
         font-size:20px;
-        color:#0DB3A6;
+        color:@mainColor;
         top:0;
         right:0;
+        cursor: pointer;
     }
     .header{
         padding:15px 20px 0 20px;
     }
     .filterText{
         padding-left:20px;
-        color:#0DB3A6;
+        color:@mainColor;
     }
     .filterSelect{
-        padding:0 4px;
+        // padding:0 4px;
         width:90% !important;
         margin:4px 5%;
-        border: 1px solid #d9d9d9;
-        border-radius:4px;
+        // border: 1px solid #d9d9d9;
+        // border-radius:4px;
     }
     .filterList{
-        max-height:250px;
+        &.filterListGeneral{
+            flex:1;
+        }
+        &.filterListGeneral{
+            max-height:250px;
+        }
         width:100%;
-        overflow-y:scroll;
+        overflow-y:auto;
         border-bottom:1px solid #e9e9e9;
         border-top:1px solid #e9e9e9;
     }
@@ -54,18 +63,7 @@
         align-items:center;
         margin:10px 0;
         .filter{
-            width:70px;
-            line-height:30px;
-            text-align:center;
             margin-right:10px;
-            color:#fff;
-            border-radius:4px;
-            background-color:#0DB2A5;
-        }
-        .clear{
-            width:70px;
-            line-height:30px;
-            text-align:center;
         }
     }
 }
@@ -110,7 +108,7 @@
         .filterItem{
             width:280px;
             margin-bottom:10px;
-            height:36px;
+            // height:36px;
             &.filterItemSelect{
                 border: 1px solid #d9d9d9;
                 border-radius: 4px;
@@ -122,7 +120,7 @@
             flex-wrap:nowrap;
             .filterLocationItem{
                 flex:1;
-                height:36px;
+                // height:36px;
                 &:not(:last-child){
                     margin-right:4px;
                 }
@@ -132,8 +130,8 @@
 }
 :global .ant-select-selection{
     font-size:14px;
-    border:none !important;
+    // border:none !important;
     &:hover{
-        color:#0DB3A6;
+        // color:#0DB3A6;
     }
 }

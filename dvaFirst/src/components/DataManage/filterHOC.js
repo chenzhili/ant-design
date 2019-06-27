@@ -1,6 +1,5 @@
 import { Component } from "react"
 import { CheckBox, Input, Icon, Checkbox, Select, DatePicker, TreeSelect, InputNumber } from "antd"
-import { connect } from "dva";
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import styles from "./filterCom.less"
@@ -11,49 +10,62 @@ const Option = Select.Option;
 
 
 
-function generateFilterCom(item, i, other) {
-    let TempCom = filterCom[item["type"]]["Com"];
-    let tempOptionArr = optionObj[item["type"]];
-    let {changeConditionValue} = other;
+function generateFilterCom(item, i, other) { 
+    console.log(other);
+    let TempCom = filterCom[item.type]["Com"];
+    let tempOptionArr = optionObj[item.type]; 
+    let {changeConditionValue,filterFeildChange,getLocationArr,templateId,FormTemplateVersionId,layout} = other;
+    const isHorizon = layout === "horizon";
+    const onChange=(value)=>{
+        let tempData = {};
+        tempData.condition = value;
+        tempData.value = "";
+        // 对于 日期 范围 进行特殊处理
+        if(item.type === "date"){
+            tempData.extendedType = "0";
+            if(value === "-1"){
+                tempData.value = [moment().format("YYYY-MM-DD HH:mm:ss"),moment().format("YYYY-MM-DD HH:mm:ss")];
+            }
+        }
+        changeConditionValue(item.id,tempData)
+    }
+    const deleteField = ()=>{
+        filterFeildChange instanceof Function && filterFeildChange(0,item.id);
+    }
     return (
-        <div key={i} className={styles.filterContainer}>
+        <div key={i} className={`${styles.filterContainer} ${isHorizon?styles.filterContainerH:""}`}>
             <div className={styles.filterHeader}>
                 <div className={styles.inlineBlock + " " + styles.filterHeaderDes}>
-                    <div className={styles.filterTitle + " " + styles.inlineBlock} title={item["name"]}>{item["name"]}</div>
-                    <Select className={styles.filterCompare} onChange={(value)=>{
-                        let tempData = {};
-                        tempData["condition"] = value;
-                        tempData["value"] = "";
-                        // 对于 日期 范围 进行特殊处理
-                        if(item["type"] == "date" && value == "-1"){
-                            tempData["value"] = [moment().format("YYYY-MM-DD HH:mm:ss"),moment().format("YYYY-MM-DD HH:mm:ss")];
-                        }
-                        changeConditionValue(item["id"],tempData)
-                    }} defaultValue={tempOptionArr[0]["value"]} dropdownMatchSelectWidth={false}>
+                    <div className={`${styles.filterTitle} ${styles.inlineBlock} ${isHorizon?styles.filterTItleH:""}`} title={item.name}>{isHorizon?`${item.title}:`:item.name}</div>
+                    <Select className={styles.filterCompare} onChange={onChange} value={item.condition} dropdownMatchSelectWidth={false}>
                         {
                             tempOptionArr.map((v,i)=>(
-                                <Option key={i} value={v["value"]}>{v["name"]}</Option>
+                                <Option key={i} value={v.value}>{v.name}</Option>
                             ))
                         }
                     </Select>
                 </div>
-                <Icon type="delete" theme="outlined" className={styles.filterIcon} />
+                {
+                    !isHorizon?<Icon type="delete" theme="outlined" className={styles.filterIcon} onClick={deleteField}/>:null
+                }
             </div>
-            <div className={styles.filterContent}>
-                <TempCom {...other} {...item}/>
+            <div className={`${styles.filterContent} ${isHorizon?styles.filterContentH:""}`}> 
+                <TempCom templateId={templateId} FormTemplateVersionId={FormTemplateVersionId} changeConditionValue={changeConditionValue} getLocationArr={getLocationArr} layout={layout} {...item}/>
             </div>
         </div>
     )
 }
 
 function GenerateFilterCondition(props) {
-    let { filterConditionArr,changeConditionValue } = props;
+    let { filterConditionArr,changeConditionValue,filterFeildChange,getLocationArr,templateId,FormTemplateVersionId,layout } = props;
+    const isHorizon = layout === "horizon";
+    // console.log(props);
     // console.log(filterConditionArr);
     return (
-        <div>
+        <div className={`${isHorizon?styles.horizonContainer:null}`}>
             {
                 filterConditionArr.map((v, i) => (
-                    generateFilterCom(v, i,{changeConditionValue})
+                    generateFilterCom(v, i,{changeConditionValue,filterFeildChange,getLocationArr,templateId,FormTemplateVersionId,layout})
                 ))
             }
         </div>

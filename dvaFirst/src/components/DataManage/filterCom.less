@@ -3,6 +3,14 @@
     vertical-align:middle;
 }
 .filterContainer{
+    &.filterContainerH{
+        display:flex;
+        padding:10px;
+        div.filterHeader{
+            line-height:normal;
+            margin-right:.5em;
+        }
+    }
     padding:10px 20px;
     .filterHeader{
         &:after{
@@ -17,14 +25,17 @@
             overflow:hidden;
             text-overflow: ellipsis;
             .filterTitle{
+                &.filterTItleH{
+                    margin-right:.5em;
+                }
                 max-width:150px;
                 white-space: nowrap;
                 overflow:hidden;
                 text-overflow: ellipsis;
             }
             .filterCompare{
-                height:30px;
-                line-height:30px;
+                // height:30px;
+                // line-height:30px;
                 vertical-align: middle;
             }
         }
@@ -34,24 +45,30 @@
             line-height:34px;
             color:rgba(0, 0, 0, 0.65);
             margin-top:5px;
+            cursor: pointer;
         }
     }
     .filterContent{
+        width:280px;
+        &.filterContentH{
+            width:auto;
+        }
         .filterItem{
-            width:280px;
+            // width:280px;
             margin-bottom:10px;
-            height:36px;
+            &.filterItemH{
+                margin-right:.5em;
+            }
             &.filterItemSelect{
-                border: 1px solid #d9d9d9;
-                border-radius: 4px;
+                // border: 1px solid #d9d9d9;
+                // border-radius: 4px;
             }
         }
         .filterNumRange{
-            width:280px;
+            // width:280px;
             display:flex;
-            height:36px;
             &>div{
-                line-height:36px;
+                // line-height:36px;
                 color:#000;
             }
             .filterNumRangeItem{
@@ -60,14 +77,13 @@
         }
         .filterLocation{
             display:flex;
-            width:280px;
+            // width:280px;
             flex-wrap:nowrap;
             .filterLocationItem{
                 flex:1;
-                height:36px;
                 &.filterItemSelect{
-                    border: 1px solid #d9d9d9;
-                    border-radius: 4px;
+                    /* border: 1px solid #d9d9d9;
+                    border-radius: 4px; */
                 }
                 &:not(:last-child){
                     margin-right:4px;
@@ -75,4 +91,8 @@
             }
         }
     }
+}
+.horizonContainer{
+    display:flex;
+    flex-wrap:wrap;
 }

@@ -1,10 +1,11 @@
 import { Component } from "react"
 import { Modal, Icon, Upload, Button, message } from "antd"
 import config from "../../../utils/config";
+import { uploadFile } from "../../../services/DataManage/DataManage"
 import styles from "./ImportProcedureOne.less"
 
 function ImportProcedureOne(props) {
-    let { importSteps, changeSteps } = props;
+    let { importSteps, changeSteps, importExcel, getExcelSheets } = props;
     return (
         <div style={{ height: "420px" }}>
             <div className={styles.alertNote}>
@@ -16,22 +17,37 @@ function ImportProcedureOne(props) {
             <div className={styles.mainContent}>
                 <div className={styles.contentOperate}>
                     <Upload accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" showUploadList={false}
-                    action={"http://127.0.0.1:5004/api/Files/ImportExcel"}
-                    onChange={(e) => { 
-                        // console.log(e);
-                        if (e["file"]["status"] === "done") {
-                            const typeReg = /^(\.csv|application\/vnd.openxmlformats-officedocument.spreadsheetml\.sheet|application\/vnd\.ms-excel)$/ig;
-                            if (typeReg.test(e["file"]["type"])) {
-                                
-                            } else {
-                                message.config({ maxCount: 1 });
-                                message.warning("不支持选择的文件类型");
+                        action={`${config.serverIp}/Files/ImportExcel`}
+                        headers={{ Authorization: "Bearer so55xAzH0le6qAOpivNn2kXI3kI+29V38FvNUPiCzl/+U+mtpGjjCGbvIeQObRNd0wGB+FUWsMOQD0koTiHHivbkyrxhmwRJmUX6ajEW2qNFguLJAYoRvkf1tM0Fxb8O0C/HbM7jSjPXx0+KoM1l5iAnFlyWN+Jgm5yC7+yHWOJ1otuMAUkR0TbYMmnOkN9vK4bJujTO6orsu+qpRozy6hdWrB7FrieQKcNSKiERLzaF4LJsCahRUuGh17mtp72DWzv0gNdwAq8093Xv5U0MkALN+yugczyl4QMywhbSc6Od645G7RshFxYTa5DJawF5P3AO7W5jg/Sdd6HeaoicgcxKROc38bK7/yz4w2CJ1aK4jJV1h162KbvQaGTgEzIPHfowJXk8sv5ewTfGNoO/ZQHFPLvHpYSjWk6D9nIiots=" }}
+                        /* customRequest={(e)=>{
+                            console.log(e);
+                            let formData = new FormData();
+                            for(let key in e){
+                                formData.append(key,e[key]);
                             }
-                        }
-                    }}
+                            uploadFile(formData).then(res=>{
+                                console.log(res);
+                            },err=>{
+                                console.log(err);
+                            })
+                        }} */
+                        onChange={(e) => {
+                            console.log(e);
+                            if (e["file"]["status"] === "done") {
+                                const typeReg = /^(\.csv|application\/vnd.openxmlformats-officedocument.spreadsheetml\.sheet|application\/vnd\.ms-excel)$/ig;
+                                if (typeReg.test(e["file"]["type"])) {
+                                    importExcel(e["file"]["response"]["ExcelData"], e["file"]["response"]["FileName"]);
+                                    changeSteps(importSteps + 1);
+                                    getExcelSheets();
+                                } else {
+                                    message.config({ maxCount: 1 });
+                                    message.warning("不支持选择的文件类型");
+                                }
+                            }
+                        }}
                     >
-                        <Button style={{ backgroundColor: "#C7EDEB", border: "1px solid #6AD0C8", padding: "0 20px" }}>
-                            <Icon type="upload" />
+                        <Button style={{ color: "#1990ff", border: "1px solid #1990ff", padding: "0 20px" }}>
+                            <Icon type="upload"/>
                             上传文件
                         </Button>
                     </Upload>

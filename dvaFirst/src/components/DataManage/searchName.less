@@ -1,5 +1,5 @@
 .container{
-    position:absolute;
+    // position:absolute;
     z-index:100;
     right:0;
     width:200px;
@@ -9,17 +9,18 @@
     -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     background-clip: padding-box;
-    .searchInput{
-        width:100%; 
+    .serachInput{
+        width:100%;
         height:30px;
         border:none;
         padding-left:30px;
         border-bottom:1px solid #E9E9E9;
+        background:url("./search.png") no-repeat 5px 6px;
         background-size:16px;
     }
     .checkboxContainer{
         height:calc(100% - 30px);
-        overflow-y:scroll;
+        overflow-y:auto;
         .checkBox{
             width:100%;
             height:30px;
@@ -33,7 +34,7 @@
             text-align:left;
             vertical-align:top;
             &.allCheckBox{
-                color:#0DB3A6;
+                color:var(--PC);
             }
             &.checkboxTitle{
                 color:#3F80AE;
