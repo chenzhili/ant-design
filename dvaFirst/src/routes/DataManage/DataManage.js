@@ -7,7 +7,7 @@ import { List, Map, is } from "immutable"
 
 import SearchName from "../../components/DataManage/searchName";
 import FilterCondition from "../../components/DataManage/filterCondition"
-import ImportFile from "../../components/DataManage/ImportFile";
+// import ImportFile from "../../components/DataManage/ImportFile";
 import TableCom from "../../components/DataManage/TableCom"
 const Option = Select.Option;
 const confirm = Modal.confirm;
@@ -261,7 +261,7 @@ class DataManage extends Component {
         return (
             <div className={styles.customContainer}>
                 <div className={`${styles.content} ${allScreen && styles.fullScreen} ${isFixedFilter?styles.fixedContent:""}`} onClick={this.containerClick.bind(this)}>
-                    <ImportFile {...importProps} />
+                    {/* <ImportFile {...importProps} /> */}
                     <div className={styles.cooperate}>
                         {
                             !isShowBatchOper && (
