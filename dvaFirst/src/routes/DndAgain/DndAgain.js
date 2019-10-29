@@ -10,8 +10,14 @@ import * as test from "./module"
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import {Map} from "immutable"
-console.log(test);
+import { Map } from "immutable"
+
+/* 测试 leaflet 地图 */
+import L from "leaflet";
+import 'leaflet.chinatmsproviders'
+import 'leaflet-choropleth'
+
+console.log(L);
 // fun1 = {}; //报错
 
 const move = "aa";
@@ -25,7 +31,7 @@ class DndAgain extends Component {
         }
     }
     onEditorStateChange(editorState) {
-        console.log(editorState,editorState.getDecorator(),editorState.getCurrentContent());
+        console.log(editorState, editorState.getDecorator(), editorState.getCurrentContent());
 
         const decorator = editorState.getDecorator();
 
@@ -38,11 +44,11 @@ class DndAgain extends Component {
         if (content.length <= 10) {
             console.log("======");
             tempState = editorState;
-        }else{
-            tempState = EditorState.createWithContent(this.state.editorState.getCurrentContent(),decorator)
+        } else {
+            tempState = EditorState.createWithContent(this.state.editorState.getCurrentContent(), decorator)
         }
         this.setState({
-            editorState:tempState,
+            editorState: tempState,
         }, () => {
             console.log(this.state.editorState.getCurrentContent().getIn(["blockMap", key, "text"]))
         });
@@ -60,8 +66,17 @@ class DndAgain extends Component {
             y: toY
         });
     }
+    componentDidMount() {
+        var mymap = L.map('map').setView([35.746512, 114.458984], 4);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: 'your.mapbox.access.token'
+        }).addTo(mymap);
+    }
     render() {
-        console.log("=====","render")
+        console.log("=====", "render")
         return (
             <div style={{ width: 400, height: 280, /* backgroundColor: "#000" */ }}>
                 <Editor
@@ -73,8 +88,9 @@ class DndAgain extends Component {
                     wrapperClassName="wrapperClassName"
                     editorClassName="editorClassName"
                     onEditorStateChange={this.onEditorStateChange.bind(this)}
-                    // onEditorStateChange={(editorState)=>{console.log(editorState);}}
+                // onEditorStateChange={(editorState)=>{console.log(editorState);}}
                 />
+                <div style={{ height: "150px", background: "#EEF8F2" }} id="map"></div>
                 {/* <Board knightPosition={[this.state.x, this.state.y]} moveKnight={this.moveKnight.bind(this)} /> */}
             </div>
         );
