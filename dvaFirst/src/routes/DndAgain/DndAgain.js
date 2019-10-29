@@ -16,6 +16,7 @@ import { Map } from "immutable"
 import L from "leaflet";
 import 'leaflet.chinatmsproviders'
 import 'leaflet-choropleth'
+import chinaGeojson from "../../../city.json"
 
 console.log(L);
 // fun1 = {}; //报错
@@ -67,19 +68,85 @@ class DndAgain extends Component {
         });
     }
     componentDidMount() {
-        var mymap = L.map('map').setView([35.746512, 114.458984], 4);
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox.streets',
-            accessToken: 'your.mapbox.access.token'
-        }).addTo(mymap);
+        this.map = L.map('map', { dragging: false, doubleClickZoom: false, boxZoom: false, minZoom: 4, maxZoom: 4, zoomControl: false, attributionControl: false }).setView([35.746512, 114.458984], 4)
+        console.dir(this.map);
+        const baseMap = L.geoJson(chinaGeojson, {
+            pointToLayer:function(geoJsonPoint, latlng){
+                return L.marker(latlng);
+            },
+            style: {
+                fillColor: "#EEEEEE",
+                weight: 0.5,
+                opacity: 1,
+                color: '#BABABA',
+                dashArray: '5',
+                fillOpacity: 0.7
+            },
+        }).addTo(this.map); 
+        /* console.log(baseMap,baseMap._layers);
+        // 并没有较少图层数
+        L.layerGroup(Object.keys(baseMap._layers).map(key=>baseMap._layers[key])).addTo(this.map) */
+        var circle = L.circle([35.746512, 114.458984], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 50000
+        }).addTo(this.map);
+        L.marker([35.746512, 114.458984]).addTo(this.map);
+        circle.bindPopup(`
+            <p>test</p>
+            sdfksdjfkdsjfkdjf
+        `).openPopup()
+
+        var littleton = L.marker([35.746512, 110.458984]).bindPopup('This is Littleton, CO.'),
+            denver = L.marker([35.746512, 120.458984]).bindPopup('This is Denver, CO.'),
+            aurora = L.marker([40.746512, 114.458984]).bindPopup('This is Aurora, CO.'),
+            golden = L.marker([30.746512, 114.458984]).bindPopup('This is Golden, CO.');
+        var cities = L.layerGroup([littleton, denver, aurora, golden]);
+
+        /* var map = L.map('map', {
+            center: [39.73, -104.99],
+            zoom: 10,
+            layers: [baseMap, cities]
+        }); */
+        // this.map.addLayer(aurora);
+        let info = L.control({ position: 'bottomright' });
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            this._div.innerHTML = `<span>均价：${11111}元</span><div class="divcolor"></div><span>${22222}元</span>`
+            return this._div;
+        };
+        info.addTo(this.map);
+        console.dir(info)
+        this.map.addLayer(littleton)
+
+        let test = L.control.layers({
+            cities,
+            [`<span style="border:1px solid #ddd;padding-right:100px;">littleton</span>`]: littleton,
+            denver, aurora, golden
+        }, null, {
+            sortLayers: true,
+            // sortFunction: sortFunc,
+            collapsed: false,
+            hideSingleBase: true,
+        }).setPosition('bottomright').addTo(this.map);
+
+        console.dir(test);
+
+        this.map.on("contextmenu",function(e){
+            console.log(e);
+        })
+
+        this.map.eachLayer(function(layer){
+            console.log("多少");
+            layer.bindPopup('Hello');
+        });
     }
     render() {
         console.log("=====", "render")
         return (
-            <div style={{ width: 400, height: 280, /* backgroundColor: "#000" */ }}>
-                <Editor
+            <div style={{ width: "100%", height: "auto", /* backgroundColor: "#000" */ }}>
+                {/* <Editor
                     maxLength={10}
                     editorState={this.state.editorState}
                     // wrapperClassName="demo-wrapper"
@@ -89,8 +156,8 @@ class DndAgain extends Component {
                     editorClassName="editorClassName"
                     onEditorStateChange={this.onEditorStateChange.bind(this)}
                 // onEditorStateChange={(editorState)=>{console.log(editorState);}}
-                />
-                <div style={{ height: "150px", background: "#EEF8F2" }} id="map"></div>
+                /> */}
+                <div style={{ height: "600px", background: "#EEF8F2" }} id="map"></div>
                 {/* <Board knightPosition={[this.state.x, this.state.y]} moveKnight={this.moveKnight.bind(this)} /> */}
             </div>
         );
