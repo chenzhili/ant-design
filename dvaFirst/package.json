@@ -18,7 +18,7 @@
     "leaflet": "^1.5.1",
     "leaflet-choropleth": "^1.1.4",
     "leaflet.chinatmsproviders": "^2.0.3",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "nprogress": "^0.2.0",
     "react": "^16.2.0",
     "react-dnd": "^4.0.2",
